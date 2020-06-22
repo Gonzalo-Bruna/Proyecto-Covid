@@ -1557,25 +1557,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
     Sleep(1100);
     clrscr();
 
-    //mostrarHistoria(2,6);
-
-    Item * item = crearItem(armas, "Katana", 1);
-
-    personaje->inventario[0] = item;
-
-    item = crearItem(armaduras, "Poleron Suprim", 2);
-
-    personaje->inventario[2] = item;
-
-    item = crearItem(armas, "Espada", 1);
-
-    personaje->inventario[4] = item;
-
-    item = crearItem(pociones, "Pocion Mediana", 3);
-
-    personaje->inventario[5] = item;
-
-    personaje->vidaActual = 1;
+    mostrarHistoria(2,6);
 
     char key;
     int opcion = 1;
@@ -1621,9 +1603,77 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
     FILE * save = fopen("save.csv", "w");
     fprintf(save,"%d", 1);
 
-    Enemigo * Slime = searchHashTable(enemigos, "Esqueleto");
+    if(opcion == 1){
 
-    pelear(personaje, Slime);
+        Enemigo * esqueleto = searchHashTable(enemigos, "Esqueleto");
+
+        if (pelear(personaje, esqueleto) == 0){
+
+            clrscr();
+            mostrarHistoria(8,10);
+            return;
+
+        }
+
+    }else{
+
+        clrscr();
+        mostrarHistoria(12,16);
+
+    }
+
+    opcion = 1;
+
+    do{
+
+        clrscr();
+
+        printf("Escoge una de las reliquias: \n\n");
+
+        if(opcion == 1) printf("->  Espada de Honos\n");
+        else printf("    Espada de Honos\n");
+        if(opcion == 2) printf("->  Daga de Tenma\n");
+        else printf("    Daga de Tenma\n");
+        if(opcion == 3) printf("->  Arco de Attar\n");
+        else printf("    Arco de Attar\n");
+        if(opcion == 4) printf("->  Vaculo de Hecate\n");
+        else printf("    Vaculo de Hecate\n");
+
+        do{
+           key  = getch();
+        }while(key != 72 && key != 80 && key != 13);
+
+        switch(key){
+            case 72: if(opcion == 1) opcion = 4;
+                    else opcion--;
+                break;
+            case 80: if(opcion == 4) opcion = 1;
+                    else opcion++;
+                break;
+
+        }
+
+        if(key == 13) break;
+
+    }while(1);
+
+    switch(opcion){
+
+        case 1: ; Item * espadaDeHonos = crearItem(armas,"Espada de Honos", 1);
+        personaje->inventario[0] = espadaDeHonos;
+        break;
+        case 2: ; Item * dagaDeTenma = crearItem(armas,"Daga de Tenma", 1);
+        personaje->inventario[0] = dagaDeTenma;
+        break;
+        case 3: ; Item * arcoDeAttar = crearItem(armas,"Arco de Attar", 1);
+        personaje->inventario[0] = arcoDeAttar;
+        break;
+        case 4: ; Item * vaculoDeHecate = crearItem(armas,"Vaculo de Hecate", 1);
+        personaje->inventario[0] = vaculoDeHecate;
+        break;
+
+    }
+
 
     return;
 
