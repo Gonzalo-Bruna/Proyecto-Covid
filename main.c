@@ -19,7 +19,7 @@ int main(){
 
         clrscr();
 
-        printf("THE GAME\n\n");
+        printf("ANOTHER QUARENTINE RPG GAME\n\n");
         if(opcion == 1) printf("->  NOVO JOGO\n");
         else printf("     NOVO JOGO\n");
         if(opcion == 2)  printf("->  CARREGAR JOGO\n");

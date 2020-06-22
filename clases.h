@@ -27,7 +27,6 @@ typedef struct Armadura{
     char * nombre;
 
     float puntosDefensa;
-    float resistenciaMagica;
 
     int requisitoMinimoFuerza;
     int requisitoMinimoAgilidad;
@@ -79,7 +78,6 @@ typedef struct Personaje{
     float ataqueMagico;
 
     float puntosDefensa;
-    float resistenciaMagica;
 
     int exp;
     int expMaxima;
@@ -95,10 +93,7 @@ typedef struct Enemigo{
 
     char * nombre;
 
-    float ataqueFisico;
-
-    float ataqueDistancia;
-    float ataqueMagico;
+    float ataque;
 
     float ataqueCritico;
 

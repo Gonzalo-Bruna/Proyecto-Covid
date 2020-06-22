@@ -50,7 +50,7 @@ Personaje * crearPersonaje(char nombre[]){
     Personaje * personaje = (Personaje *) malloc (sizeof(Personaje));
     strcpy(personaje->nombre, nombre);
 
-    personaje->nivel = 1;
+    personaje->nivel = 0;
     personaje->puntosDeHabilidad = 0;
 
     personaje->fuerza = 1;
@@ -67,12 +67,11 @@ Personaje * crearPersonaje(char nombre[]){
     personaje->ataqueMagico;
 
     personaje->puntosDefensa = 0;
-    personaje->resistenciaMagica = 0;
 
     actualizarStats(personaje);
 
     personaje->exp = 0;
-    personaje->expMaxima = 10;
+    personaje->expMaxima = 500;
     personaje->oro = 0;
 
     personaje->inventario = (Item **) calloc (6, sizeof(Item *));
@@ -92,15 +91,13 @@ void cargarEnemigos(HashTable * enemigos){
         Enemigo * nuevo = (Enemigo *) malloc (sizeof(Enemigo));
 
         nuevo->nombre = get_csv_field(linea, 1);
-        nuevo->ataqueFisico = atof(get_csv_field(linea, 2));
-        nuevo->ataqueDistancia = atof(get_csv_field(linea, 3));
-        nuevo->ataqueMagico = atof(get_csv_field(linea, 4));
-        nuevo->ataqueCritico = atof(get_csv_field(linea, 5));
+        nuevo->ataque = atof(get_csv_field(linea, 2));
+        nuevo->ataqueCritico = atof(get_csv_field(linea, 3));
 
-        nuevo->vidaMaxima = atof(get_csv_field(linea, 6));
-        nuevo->vidaActual = atof(get_csv_field(linea, 7));
-        nuevo->puntosDefensa = atof(get_csv_field(linea, 8));
-        nuevo->resistenciaMagica = atof(get_csv_field(linea, 9));
+        nuevo->vidaMaxima = atof(get_csv_field(linea, 4));
+        nuevo->vidaActual = atof(get_csv_field(linea, 4));
+        nuevo->puntosDefensa = atof(get_csv_field(linea, 5));
+        nuevo->resistenciaMagica = atof(get_csv_field(linea, 6));
 
         insertHashTable(enemigos, nuevo->nombre, nuevo);
     }
@@ -151,12 +148,10 @@ void cargarArmaduras(HashTable * armaduras){
 
         nueva->nombre = get_csv_field(linea, 1);
         nueva->puntosDefensa = atof(get_csv_field(linea, 2));
-        nueva->resistenciaMagica = atof(get_csv_field(linea, 3));
-
-        nueva->requisitoMinimoFuerza = atoi(get_csv_field(linea, 4));
-        nueva->requisitoMinimoAgilidad = atoi(get_csv_field(linea, 5));
-        nueva->requisitoMinimoVitalidad = atoi(get_csv_field(linea, 6));
-        nueva->requisitoMinimoInteligencia = atoi(get_csv_field(linea, 7));
+        nueva->requisitoMinimoFuerza = atoi(get_csv_field(linea, 3));
+        nueva->requisitoMinimoAgilidad = atoi(get_csv_field(linea, 4));
+        nueva->requisitoMinimoVitalidad = atoi(get_csv_field(linea, 5));
+        nueva->requisitoMinimoInteligencia = atoi(get_csv_field(linea, 6));
 
         insertHashTable(armaduras, nueva->nombre, nueva);
     }
@@ -332,7 +327,6 @@ void equiparArmadura(Item * item, Personaje * personaje){
         item->equipado = true;
 
         personaje->puntosDefensa = personaje->puntosDefensa + item->armadura->puntosDefensa;
-        personaje->resistenciaMagica = personaje->resistenciaMagica + item->armadura->resistenciaMagica;
 
         printf("\nLa armadura \"%s\" ha sido equipada correctamente.", item->armadura->nombre);
 
@@ -345,7 +339,6 @@ void desequiparArmadura(Item * item, Personaje * personaje){
     item->equipado = false;
 
     personaje->puntosDefensa = personaje->puntosDefensa - item->armadura->puntosDefensa;
-    personaje->resistenciaMagica = personaje->resistenciaMagica - item->armadura->resistenciaMagica;
 
     printf("\nLa armadura \"%s\" ha sido desequipada correctamente.", item->armadura->nombre);
 
@@ -449,13 +442,6 @@ void mostrarObjeto(Item * item){
 
             if(item->armadura->puntosDefensa > 0) printf("        Puntos de defensa: +%.1f", item->armadura->puntosDefensa);
             else printf("        Puntos de defensa: %.1f", item->armadura->puntosDefensa);
-
-        }
-
-        if(item->armadura->resistenciaMagica != 0){
-
-            if(item->armadura->resistenciaMagica > 0) printf("        Resistencia Magica: +%.1f", item->armadura->resistenciaMagica);
-            else printf("        Resistencia Magica: %.1f", item->armadura->resistenciaMagica);
 
         }
 
@@ -601,13 +587,6 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje, bool hayA
 
                 if(item->armadura->puntosDefensa > 0) printf("        Puntos de defensa: +%.1f", item->armadura->puntosDefensa);
                 else printf("        Puntos de defensa: %.1f", item->armadura->puntosDefensa);
-
-            }
-
-            if(item->armadura->resistenciaMagica != 0){
-
-                if(item->armadura->resistenciaMagica > 0) printf("        Resistencia Magica: +%.1f", item->armadura->resistenciaMagica);
-                else printf("        Resistencia Magica: %.1f", item->armadura->resistenciaMagica);
 
             }
 
@@ -888,7 +867,7 @@ void abrirInventario(Personaje * personaje){
         hayArma = false;
         hayArmadura = false;
 
-        for (i = 0 ; i < 2 ; i++){
+        for (i = 0 ; i < 6 ; i++){
 
             if(personaje->inventario[i] != NULL && personaje->inventario[i]->equipado == true){
 
@@ -1247,13 +1226,18 @@ Item * crearItem(HashTable * items, char * nombre, int opcion){
 
 int pelear(Personaje * personaje, Enemigo * enemigo){
 
+    if(!personaje || !enemigo){
+
+        printf("\n\nse produjo un error\n\n"); return 0;
+
+    }
+
     char key;
     int opcion = 1;
     int turno;
     int numero;
     float danoExtra;
     char texto[100];
-    float mayorDanoEnemigo = 0;
 
     //esto es para buscar el arma y armadura equipadas (siempre que lo haya)
 
@@ -1271,10 +1255,6 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
         }
 
     }
-
-    if (enemigo->ataqueFisico > mayorDanoEnemigo) mayorDanoEnemigo = enemigo->ataqueFisico;
-    if (enemigo->ataqueMagico > mayorDanoEnemigo) mayorDanoEnemigo = enemigo->ataqueMagico;
-    if (enemigo->ataqueDistancia > mayorDanoEnemigo) mayorDanoEnemigo = enemigo->ataqueDistancia;
 
     strcpy(texto, "");
 
@@ -1344,7 +1324,7 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
 
                 }
 
-                enemigo->vidaActual = enemigo->vidaActual - (personaje->ataqueFisico * danoExtra);
+                enemigo->vidaActual = enemigo->vidaActual - ( (personaje->ataqueFisico * danoExtra) - enemigo->puntosDefensa);
 
                 if (danoExtra != 1.5) strcpy(texto, "Has herido al enemigo");
 
@@ -1388,7 +1368,7 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
 
                 }
 
-                personaje->vidaActual = personaje->vidaActual - (mayorDanoEnemigo * danoExtra);
+                personaje->vidaActual = personaje->vidaActual - ((enemigo->ataque * danoExtra) - personaje->puntosDefensa);
                 if (danoExtra != 1.5) strcpy(texto, "El enemigo te ha herido");
 
                 mostrarAccionPelea(texto);
@@ -1416,7 +1396,7 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
 
                 }
 
-                enemigo->vidaActual = enemigo->vidaActual - (personaje->ataqueDistancia * danoExtra);
+                enemigo->vidaActual = enemigo->vidaActual - ( (personaje->ataqueDistancia * danoExtra) - enemigo->puntosDefensa );
 
                 if (danoExtra != 1.5) strcpy(texto, "Has herido al enemigo");
 
@@ -1461,7 +1441,7 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
 
                 }
 
-                personaje->vidaActual = personaje->vidaActual - (mayorDanoEnemigo * danoExtra);
+                personaje->vidaActual = personaje->vidaActual - ((enemigo->ataque * danoExtra ) - personaje->puntosDefensa);
                 if (danoExtra != 1.5) strcpy(texto, "El enemigo te ha herido");
 
                 mostrarAccionPelea(texto);
@@ -1478,7 +1458,7 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
             }
             else if( opcion == 3){
 
-                enemigo->vidaActual = enemigo->vidaActual - personaje->ataqueMagico;
+                enemigo->vidaActual = enemigo->vidaActual - (personaje->ataqueMagico - enemigo->resistenciaMagica);
 
                 strcpy(texto, "Has herido al enemigo");
 
@@ -1522,7 +1502,7 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
 
                 }
 
-                personaje->vidaActual = personaje->vidaActual - (mayorDanoEnemigo * danoExtra);
+                personaje->vidaActual = personaje->vidaActual - ( (enemigo->ataque * danoExtra) - personaje->puntosDefensa );
                 if (danoExtra != 1.5) strcpy(texto, "El enemigo te ha herido");
 
                 mostrarAccionPelea(texto);
@@ -1641,7 +1621,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
     FILE * save = fopen("save.csv", "w");
     fprintf(save,"%d", 1);
 
-    Enemigo * Slime = searchHashTable(enemigos, "Slime");
+    Enemigo * Slime = searchHashTable(enemigos, "Esqueleto");
 
     pelear(personaje, Slime);
 
