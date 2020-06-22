@@ -64,7 +64,7 @@ typedef struct Personaje{
     int inteligencia;
 
     int nivel;
-    int puntosDeHabildad;
+    int puntosDeHabilidad;
 
     //fuerza
     float ataqueFisico;
@@ -83,6 +83,7 @@ typedef struct Personaje{
 
     int exp;
     int expMaxima;
+
     int oro;
 
     //arreglo de items en la mochila
@@ -99,8 +100,7 @@ typedef struct Enemigo{
     float ataqueDistancia;
     float ataqueMagico;
 
-    float ataqueCriticoDistancia;
-    float ataqueCriticoCuerpo;
+    float ataqueCritico;
 
     float vidaMaxima;
     float vidaActual;

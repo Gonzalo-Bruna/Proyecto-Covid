@@ -6,20 +6,20 @@ int main(){
     char key;
     int opcion = 1;
 
-    HashTable * enemigos = createHashTable(50);
     HashTable * armas = createHashTable(50);
     HashTable * armaduras = createHashTable(50);
     HashTable * pociones = createHashTable(50);
-    cargarEnemigos(enemigos);
+    HashTable * enemigos = createHashTable(50);
     cargarArmas(armas);
     cargarArmaduras(armaduras);
     cargarPociones(pociones);
+    cargarEnemigos(enemigos);
 
     do{
 
         clrscr();
 
-        printf("\n     ANOTHER QUARENTINE RPG GAME\n\n");
+        printf("THE GAME\n\n");
         if(opcion == 1) printf("->  NOVO JOGO\n");
         else printf("     NOVO JOGO\n");
         if(opcion == 2)  printf("->  CARREGAR JOGO\n");

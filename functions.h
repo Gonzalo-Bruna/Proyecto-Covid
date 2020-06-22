@@ -8,7 +8,7 @@
 #include <windows.h>
 
 //hace una copia del char
-char * _strdup (const char *);
+char * _strdup (const char *s);
 
 //lee un campo de un archivo csv
 const char *get_csv_field (char * tmp, int i);
@@ -16,17 +16,10 @@ const char *get_csv_field (char * tmp, int i);
 //recibe un puntero a char, muestra el texto letra por letra con cierta lentitud, utilizando la funcion sleep
 void mostrarLetraPorLetra(char *);
 
+void mostrarAccionPelea(char *);
+
 //crea un personaje nuevo y lo retorna
 Personaje * crearPersonaje(char[]);
-
-//actualiza los stats del personaje, como cuando sube de nivel y mejora sus habilidades
-void actualizarStats(Personaje *);
-
-//función que aumenta los puntos de nivel, actualiza tu vida maxima y
-void subirNivel(Personaje *);
-
-//carga los enemigos a una tabla hash para acceder a ellos posteriormente
-void cargarEnemigos(HashTable *);
 
 //esta funcion que carga las armas del archivo armas.csv en una tabla hash
 void cargarArmas(HashTable *);
@@ -36,6 +29,12 @@ void cargarArmaduras(HashTable *);
 
 //funcion que carga las pociones del archivo pociones.csv en una tabla hash
 void cargarPociones(HashTable *);
+
+//actualiza los stats del personaje, como cuando sube de nivel y mejora sus habilidades
+void actualizarStats(Personaje *);
+
+//función que aumenta los puntos de nivel, actualiza tu vida maxima y
+void subirNivel(Personaje *);
 
 //equipa un arma, por lo que suma los stats del arma al personaje, además comprueba los requisitos para equipar
 void equiparArma(Item *, Personaje *);
@@ -63,9 +62,6 @@ void abrirEstadisticas(Personaje *);
 /* crea un item, proporcionado por la tabla hash (púede ser arma, armadura o pocion)
    si es que el tercer parametro es 1, se busca crear un arma, si el parmametro es 2 una amardura, si es 3 una pocion */
 Item * crearItem(HashTable *, char *, int);
-
-//Funcion que ejecuta una pelea, con todas sus implicancias, si pierdes retorna 0, si ganas retorna 1
-int pelear(Personaje *, Enemigo *);
 
 //crea una nueva partida
 void nuevaPartida(HashTable *, HashTable *, HashTable *, HashTable *);

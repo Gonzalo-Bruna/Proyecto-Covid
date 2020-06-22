@@ -36,13 +36,22 @@ void mostrarLetraPorLetra(char * texto){
 
 }
 
+void mostrarAccionPelea(char * texto){
+
+    clrscr();
+    printf("\n\n\n\n\n\n\n                                     ");
+    mostrarLetraPorLetra(texto);
+    Sleep(700);
+
+}
+
 Personaje * crearPersonaje(char nombre[]){
 
     Personaje * personaje = (Personaje *) malloc (sizeof(Personaje));
     strcpy(personaje->nombre, nombre);
 
     personaje->nivel = 1;
-    personaje->puntosDeHabildad = 0;
+    personaje->puntosDeHabilidad = 0;
 
     personaje->fuerza = 1;
     personaje->agilidad = 1;
@@ -63,56 +72,12 @@ Personaje * crearPersonaje(char nombre[]){
     actualizarStats(personaje);
 
     personaje->exp = 0;
-    personaje->expMaxima = 12;
+    personaje->expMaxima = 10;
     personaje->oro = 0;
 
-    personaje->inventario = (Item **) calloc (5, sizeof(Item *));
+    personaje->inventario = (Item **) calloc (6, sizeof(Item *));
 
     return personaje;
-
-}
-
-void actualizarStats(Personaje * personaje){
-    personaje->ataqueFisico = 1.5 * personaje->fuerza;
-    personaje->ataqueDistancia = 1 * personaje->agilidad;
-    personaje->ataqueCriticoDistancia = 1 * personaje->agilidad;
-    personaje->ataqueCriticoCuerpo = 1.5 * personaje->agilidad;
-    personaje->vidaMaxima = 6 * personaje->vitalidad;
-    personaje->ataqueMagico = 2 * personaje->inteligencia;
-}
-
-void subirNivel(Personaje * personaje){
-
-    int expMaximaAntigua = personaje->expMaxima;
-    int puntosHabilidadAntiguos = personaje->puntosDeHabildad;
-
-    if (personaje->exp > personaje->expMaxima){
-
-        personaje->exp = personaje->exp - personaje->expMaxima;
-
-    }
-    else{
-
-        personaje->exp = 0;
-
-    }
-
-    personaje->expMaxima = personaje->expMaxima * 1.2;
-
-    personaje->nivel++;
-    personaje->puntosDeHabildad = personaje->puntosDeHabildad + 5;
-
-    char * texto = "Felicidades, has subido de nivel!";
-    mostrarLetraPorLetra(texto);
-
-    Sleep(1000);
-
-    printf("\n\n    Tu nuevo nivel: %d\n", personaje->nivel);
-    printf("    Tu nueva experiencia: %d\n", personaje->exp);
-    printf("    Exp para subir al siguiente nivel: %d -> %d\n", expMaximaAntigua, personaje->expMaxima);
-    printf("    Puntos de habilidad: %d -> %d\n", puntosHabilidadAntiguos, personaje->puntosDeHabildad);
-    printf("    Puedes utilizar los puntos de habilidad en el menu de estadisticas.\n\n");
-    system("pause");
 
 }
 
@@ -130,13 +95,12 @@ void cargarEnemigos(HashTable * enemigos){
         nuevo->ataqueFisico = atof(get_csv_field(linea, 2));
         nuevo->ataqueDistancia = atof(get_csv_field(linea, 3));
         nuevo->ataqueMagico = atof(get_csv_field(linea, 4));
-        nuevo->ataqueCriticoDistancia = atof(get_csv_field(linea, 5));
-        nuevo->ataqueCriticoCuerpo = atof(get_csv_field(linea, 6));
+        nuevo->ataqueCritico = atof(get_csv_field(linea, 5));
 
-        nuevo->vidaMaxima = atof(get_csv_field(linea, 7));
-        nuevo->vidaActual = atof(get_csv_field(linea, 8));
-        nuevo->puntosDefensa = atof(get_csv_field(linea, 9));
-        nuevo->resistenciaMagica = atof(get_csv_field(linea, 10));
+        nuevo->vidaMaxima = atof(get_csv_field(linea, 6));
+        nuevo->vidaActual = atof(get_csv_field(linea, 7));
+        nuevo->puntosDefensa = atof(get_csv_field(linea, 8));
+        nuevo->resistenciaMagica = atof(get_csv_field(linea, 9));
 
         insertHashTable(enemigos, nuevo->nombre, nuevo);
     }
@@ -214,6 +178,50 @@ void cargarPociones(HashTable * pociones){
 
         insertHashTable(pociones, nueva->nombre, nueva);
     }
+
+}
+
+void actualizarStats(Personaje * personaje){
+    personaje->ataqueFisico = 1.5 * personaje->fuerza;
+    personaje->ataqueDistancia = 1 * personaje->agilidad;
+    personaje->ataqueCriticoDistancia = 1 * personaje->agilidad;
+    personaje->ataqueCriticoCuerpo = 1.5 * personaje->agilidad;
+    personaje->vidaMaxima = 6 * personaje->vitalidad;
+    personaje->ataqueMagico = 2 * personaje->inteligencia;
+}
+
+void subirNivel(Personaje * personaje){
+
+    int expMaximaAntigua = personaje->expMaxima;
+    int puntosHabilidadAntiguos = personaje->puntosDeHabilidad;
+
+    if (personaje->exp > personaje->expMaxima){
+
+        personaje->exp = personaje->exp - personaje->expMaxima;
+
+    }
+    else{
+
+        personaje->exp = 0;
+
+    }
+
+    personaje->expMaxima = personaje->expMaxima * 1.2;
+
+    personaje->nivel++;
+    personaje->puntosDeHabilidad = personaje->puntosDeHabilidad + 5;
+
+    char * texto = "Felicidades, has subido de nivel!";
+    mostrarLetraPorLetra(texto);
+
+    Sleep(1000);
+
+    printf("\n\n    Tu nuevo nivel: %d\n", personaje->nivel);
+    printf("    Tu nueva experiencia: %d\n", personaje->exp);
+    printf("    Exp para subir al siguiente nivel: %d -> %d\n", expMaximaAntigua, personaje->expMaxima);
+    printf("    Puntos de habilidad: %d -> %d\n", puntosHabilidadAntiguos, personaje->puntosDeHabilidad);
+    printf("    Puedes utilizar los puntos de habilidad en el menu de estadisticas.\n\n");
+    system("pause");
 
 }
 
@@ -348,6 +356,7 @@ void mostrarObjeto(Item * item){
     if (strcmp(item->tipo, "Arma") == 0){
 
         printf("->  %s\n", item->arma->nombre);
+        printf("        Stats: \n");
 
         if(item->arma->ataqueFisico != 0){
 
@@ -434,6 +443,7 @@ void mostrarObjeto(Item * item){
     else if(strcmp(item->tipo, "Armadura") == 0){
 
         printf("->  %s\n", item->armadura->nombre);
+        printf("        Stats: \n");
 
         if(item->armadura->puntosDefensa != 0){
 
@@ -476,6 +486,7 @@ void mostrarObjeto(Item * item){
     else{
 
         printf("->  %s\n", item->pocion->nombre);
+        printf("        Stats: \n");
 
         printf("        Puntos de vida: +%.1f", item->pocion->puntosDeVida);
 
@@ -497,6 +508,7 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje, bool hayA
         if (strcmp(item->tipo, "Arma") == 0){
 
             printf("    %s\n", item->arma->nombre);
+            printf("    Stats: \n");
 
             if(item->arma->ataqueFisico != 0){
 
@@ -582,7 +594,8 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje, bool hayA
         }
         else if(strcmp(item->tipo, "Armadura") == 0){
 
-            printf("    %s\n", item->armadura->nombre);
+            printf("    %s\n\n", item->armadura->nombre);
+            printf("    Stats: \n");
 
             if(item->armadura->puntosDefensa != 0){
 
@@ -625,8 +638,30 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje, bool hayA
         else{
 
             printf("    %s\n", item->pocion->nombre);
+            printf("    Stats: \n");
 
-            printf("        Puntos de vida: +%.1f", item->pocion->puntosDeVida);
+            printf("        Curacion: +%.1f", item->pocion->puntosDeVida);
+            if(personaje->vidaActual == personaje->vidaMaxima){
+
+                printf("\n\n        Tu vida esta completa");
+                printf("\n\n        Vida actual: %.1f / %.1f\n", personaje->vidaActual, personaje->vidaMaxima);
+
+            }
+            else{
+
+                printf("\n\n        Vida actual: %.1f / %.1f\n", personaje->vidaActual, personaje->vidaMaxima);
+                if ( (personaje->vidaActual + item->pocion->puntosDeVida) >= personaje->vidaMaxima ){
+
+                    printf("        Al curarse: %.1f / %.1f", personaje->vidaMaxima, personaje->vidaMaxima);
+
+                }
+                else{
+
+                    printf("        Al curarse: %.1f / %.1f", personaje->vidaActual + item->pocion->puntosDeVida, personaje->vidaMaxima);
+
+                }
+
+            }
             printf("\n\n");
 
         }
@@ -688,21 +723,27 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje, bool hayA
 
         if ( strcmp (item->tipo, "Pocion") == 0 ) {
 
+            clrscr();
+            printf("\n\n\n\n\n\n");
             if(personaje->vidaActual == personaje->vidaMaxima){
 
-                printf("\nTu vida ya se encuentra llena");
+                printf("                         Tu vida ya se encuentra llena");
 
             }
             else if ( (personaje->vidaActual + item->pocion->puntosDeVida) >= personaje->vidaMaxima ){
 
                 personaje->vidaActual = personaje->vidaMaxima;
+                printf("                          Te has curado por completo");
 
             }
             else{
 
                 personaje->vidaActual = personaje->vidaActual + item->pocion->puntosDeVida;
+                printf("                          Te has curado %.1f puntos de vida", item->pocion->puntosDeVida);
 
             }
+
+            printf("\n\n\n\n");
 
         }
         else{
@@ -797,8 +838,15 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje, bool hayA
 
         if(item->equipado == true){
 
-            if( strcmp(item->tipo, "Arma") == 0 ) desequiparArma(item, personaje);
-            else desequiparArmadura(item, personaje);
+            if( strcmp(item->tipo, "Arma") == 0 ){
+
+                desequiparArma(item, personaje);
+            }
+            else{
+
+                desequiparArmadura(item, personaje);
+            }
+
 
             printf(" Has tirado el objeto.");
 
@@ -822,12 +870,12 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje, bool hayA
 
 void abrirInventario(Personaje * personaje){
 
-    Item ** objetosEquipados = (Item **) calloc (5, sizeof(Item *));
+    Item ** objetosEquipados = (Item **) calloc (2, sizeof(Item *));
     int opcion = 1;
     char key;
     bool hayObjetos;
-    bool hayArma = false;
-    bool hayArmadura = false;
+    bool hayArma;
+    bool hayArmadura;
     int i;
     int cont2;
 
@@ -837,8 +885,10 @@ void abrirInventario(Personaje * personaje){
 
         int cont = 0;
         hayObjetos = false;
+        hayArma = false;
+        hayArmadura = false;
 
-        for (i = 0 ; i < 5 ; i++){
+        for (i = 0 ; i < 2 ; i++){
 
             if(personaje->inventario[i] != NULL && personaje->inventario[i]->equipado == true){
 
@@ -853,7 +903,7 @@ void abrirInventario(Personaje * personaje){
 
             cont = 0;
 
-            for (i = 0 ; i < 5 ; i++){
+            for (i = 0 ; i < 6 ; i++){
 
                 if(personaje->inventario[i] != NULL && personaje->inventario[i]->equipado == true){
 
@@ -974,6 +1024,23 @@ void abrirInventario(Personaje * personaje){
 
         }
 
+        if(personaje->inventario[5] == NULL){
+
+            if (opcion == 6) printf("->  Vacio\n");
+            else printf("    Vacio\n");
+
+        }
+        else{
+
+            if(opcion == 6){
+
+                mostrarObjeto(personaje->inventario[5]);
+
+            }
+            else printf("    %s\n", personaje->inventario[5]->nombre);
+
+        }
+
         printf("\n\nPresione enter para ver las opciones del objeto.\n");
         printf("Presione i para cerrar el inventario.");
 
@@ -984,10 +1051,10 @@ void abrirInventario(Personaje * personaje){
         }while(key != 72 && key != 80 && key != 13 && key != 105);
 
         switch(key){
-            case 72: if(opcion == 1) opcion = 5;
+            case 72: if(opcion == 1) opcion = 6;
                     else opcion--;
                 break;
-            case 80: if(opcion == 5) opcion = 1;
+            case 80: if(opcion == 6) opcion = 1;
                     else opcion++;
                 break;
         }
@@ -1013,11 +1080,11 @@ void abrirEstadisticas(Personaje * personaje){
 
         clrscr();
         printf("Estadisticas: \n\n");
-        printf("    Nombre: %s                                         Puntos de habilidad: %d\n", personaje->nombre, personaje->puntosDeHabildad);
+        printf("    Nombre: %s                                         Puntos de habilidad: %d\n", personaje->nombre, personaje->puntosDeHabilidad);
         printf("    Vida Actual: %.1f / %.1f\n", personaje->vidaActual, personaje->vidaMaxima);
         printf("    Nivel: %d\n\n", personaje->nivel);
 
-        if(personaje->puntosDeHabildad == 0){
+        if(personaje->puntosDeHabilidad == 0){
 
             if(opcion == 1) printf("    ->  Fuerza: %d\n", personaje->fuerza);
             else printf("         Fuerza: %d\n", personaje->fuerza);
@@ -1067,7 +1134,7 @@ void abrirEstadisticas(Personaje * personaje){
 
         if(key == 13){
 
-            if(personaje->puntosDeHabildad == 0){
+            if(personaje->puntosDeHabilidad == 0){
 
                 clrscr();
 
@@ -1085,14 +1152,14 @@ void abrirEstadisticas(Personaje * personaje){
 
                     personaje->fuerza++;
                     actualizarStats(personaje);
-                    personaje->puntosDeHabildad--;
+                    personaje->puntosDeHabilidad--;
 
                 }
                 else if(opcion == 2){
 
                     personaje->agilidad++;
                     actualizarStats(personaje);
-                    personaje->puntosDeHabildad--;
+                    personaje->puntosDeHabilidad--;
 
                 }
                 else if(opcion == 3){
@@ -1100,14 +1167,14 @@ void abrirEstadisticas(Personaje * personaje){
                     personaje->vitalidad++;
                     actualizarStats(personaje);
                     personaje->vidaActual = personaje->vidaActual + 6;
-                    personaje->puntosDeHabildad--;
+                    personaje->puntosDeHabilidad--;
 
                 }
                 else{
 
                     personaje->inteligencia++;
                     actualizarStats(personaje);
-                    personaje->puntosDeHabildad--;
+                    personaje->puntosDeHabilidad--;
 
                 }
 
@@ -1181,26 +1248,304 @@ Item * crearItem(HashTable * items, char * nombre, int opcion){
 int pelear(Personaje * personaje, Enemigo * enemigo){
 
     char key;
-    int opcion;
+    int opcion = 1;
     int turno;
+    int numero;
+    float danoExtra;
+    char texto[100];
+    float mayorDanoEnemigo = 0;
 
-    do{
+    //esto es para buscar el arma y armadura equipadas (siempre que lo haya)
 
-        printf("-------------------------------------------------------------------------------------------");
-        printf("                                       %s\n\n", enemigo->nombre);
-        printf("                                       Vida: %.1f / %.1f\n\n\n\n", enemigo->vidaActual, enemigo->vidaMaxima);
-        printf("                //aqui van las actualizaciones                    \n\n\n\n");
-        printf("                                       %s\n\n", personaje->nombre);
-        printf("                                          Nivel: %d\n\n", personaje->nivel);
-        printf("                                       Vida: %.1f / %.1f", personaje->vidaActual, personaje->vidaMaxima);
-        printf("                                       Exp: %d / %d", personaje->exp, personaje->expMaxima);
-        printf("                                       Arma: %s", personaje->inventario->);
+    Item * armaEquipada = NULL;
+    Item * armaduraEquipada = NULL;
+    int i;
 
+    for (i = 0 ; i < 6 ; i++){
 
+        if(personaje->inventario[i] != NULL){
+
+            if( strcmp (personaje->inventario[i]->tipo, "Arma") == 0) armaEquipada = personaje->inventario[i];
+            else if( strcmp(personaje->inventario[i]->tipo, "Armadura") == 0) armaduraEquipada = personaje->inventario[i];
+
+        }
 
     }
 
+    if (enemigo->ataqueFisico > mayorDanoEnemigo) mayorDanoEnemigo = enemigo->ataqueFisico;
+    if (enemigo->ataqueMagico > mayorDanoEnemigo) mayorDanoEnemigo = enemigo->ataqueMagico;
+    if (enemigo->ataqueDistancia > mayorDanoEnemigo) mayorDanoEnemigo = enemigo->ataqueDistancia;
 
+    strcpy(texto, "");
+
+    do{
+
+        clrscr();
+
+        printf("-----------------------------------------------------------------------------------------------------------\n");
+        printf("                                       %s\n\n", enemigo->nombre);
+        printf("                                       Vida: %.1f / %.1f\n\n\n\n", enemigo->vidaActual, enemigo->vidaMaxima);
+        printf("                                     %s                    \n\n\n\n", texto);
+        printf("                                       %s\n\n", personaje->nombre);
+        printf("                                          Nivel: %d\n\n", personaje->nivel);
+        printf("                                       Vida: %.1f / %.1f\n", personaje->vidaActual, personaje->vidaMaxima);
+        printf("                                       Exp: %d / %d\n", personaje->exp, personaje->expMaxima);
+        if(armaEquipada != NULL) printf("                                       Arma: %s\n", armaEquipada->nombre);
+        else printf("                                       Arma: No posee arma equipada\n");
+        if(armaduraEquipada != NULL) printf("                                       Armadura: %s\n", armaduraEquipada->nombre);
+        else printf("                                       Armadura: No posee armadura equipada\n");
+        printf("-----------------------------------------------------------------------------------------------------------\n\n");
+        if (opcion == 1) printf("          -> Ataque Fisico");
+        else printf("             Ataque Fisico");     //
+        if (opcion == 2) printf("           -> Ataque A Distancia");
+        else printf("              Ataque A Distancia");
+        if (opcion == 3) printf("           -> Ataque Magico\n\n");
+        else printf("              Ataque Magico\n\n");
+        if (opcion == 4) printf("                                        -> Inventario\n");
+        else printf("                                           Inventario\n");
+
+        strcpy(texto, "");
+
+        do{
+            key = getch();
+
+        }while(key != 13 && key != 72 && key != 80 && key != 77 && key != 75); //derecha 77 izquierda 75
+
+        switch(key){
+
+            case 72: if (opcion == 2) opcion = 4;
+                    else if (opcion == 4) opcion = 2;
+                break;
+
+            case 80: if (opcion == 4) opcion = 2;
+                     else opcion = 4;
+                break;
+            case 75: if (opcion == 1) opcion = 3;
+                     else if (opcion != 4) opcion--;
+                break;
+            case 77: if (opcion == 3) opcion = 1;
+                     else if (opcion != 4) opcion++;
+                break;
+
+        }
+
+        if(key == 13){
+
+            if(opcion == 1){
+
+                danoExtra = 1;
+
+                numero = rand() % 1001;
+
+                if(numero <= (personaje->ataqueCriticoCuerpo * 10) ){
+
+                    danoExtra = 1.5;
+                    strcpy(texto, "Has dado un golpe crtico!");
+
+                }
+
+                enemigo->vidaActual = enemigo->vidaActual - (personaje->ataqueFisico * danoExtra);
+
+                if (danoExtra != 1.5) strcpy(texto, "Has herido al enemigo");
+
+                mostrarAccionPelea(texto);
+
+                if(enemigo->vidaActual <= 0){
+
+                    strcpy(texto, "Has derrotado al enemigo!");
+                    mostrarAccionPelea(texto);
+                    Sleep(1000);
+                    return 1;
+                }
+
+                clrscr();
+
+                printf("-----------------------------------------------------------------------------------------------------------\n");
+                printf("                                       %s\n\n", enemigo->nombre);
+                printf("                                       Vida: %.1f / %.1f\n\n\n\n", enemigo->vidaActual, enemigo->vidaMaxima);
+                printf("                                     %s                    \n\n\n\n", texto);
+                printf("                                       %s\n\n", personaje->nombre);
+                printf("                                          Nivel: %d\n\n", personaje->nivel);
+                printf("                                       Vida: %.1f / %.1f\n", personaje->vidaActual, personaje->vidaMaxima);
+                printf("                                       Exp: %d / %d\n", personaje->exp, personaje->expMaxima);
+                if(armaEquipada != NULL) printf("                                       Arma: %s\n", armaEquipada->nombre);
+                else printf("                                       Arma: No posee arma equipada\n");
+                if(armaduraEquipada != NULL) printf("                                       Armadura: %s\n", armaduraEquipada->nombre);
+                else printf("                                       Armadura: No posee armadura equipada\n");
+                printf("-----------------------------------------------------------------------------------------------------------\n\n");
+                printf("                                           TURNO DEL ENEMIGO                                                  ");
+
+                Sleep(2500);
+
+                danoExtra = 1;
+
+                numero = rand() % 1001;
+
+                if(numero <= (enemigo->ataqueCritico * 10) ){
+
+                    danoExtra = 1.5;
+                    strcpy(texto, "Has recibido un golpe crtico!");
+
+                }
+
+                personaje->vidaActual = personaje->vidaActual - (mayorDanoEnemigo * danoExtra);
+                if (danoExtra != 1.5) strcpy(texto, "El enemigo te ha herido");
+
+                mostrarAccionPelea(texto);
+
+                if(personaje->vidaActual <= 0){
+
+                    strcpy(texto, "Has sido derrotado..");
+                    mostrarAccionPelea(texto);
+                    Sleep(1000);
+                    return 0;
+
+                }
+
+            }
+            else if(opcion == 2){
+
+                danoExtra = 1;
+
+                numero = rand() % 1001;
+
+                if(numero <= (personaje->ataqueCriticoDistancia * 10) ){
+
+                    danoExtra = 1.5;
+                    strcpy(texto, "Has dado un golpe crtico!");
+
+                }
+
+                enemigo->vidaActual = enemigo->vidaActual - (personaje->ataqueDistancia * danoExtra);
+
+                if (danoExtra != 1.5) strcpy(texto, "Has herido al enemigo");
+
+                mostrarAccionPelea(texto);
+
+                if(enemigo->vidaActual <= 0){
+
+                    strcpy(texto, "Has derrotado al enemigo!");
+                    mostrarAccionPelea(texto);
+                    Sleep(1000);
+                    return 1;
+
+                }
+
+                clrscr();
+
+                printf("-----------------------------------------------------------------------------------------------------------\n");
+                printf("                                       %s\n\n", enemigo->nombre);
+                printf("                                       Vida: %.1f / %.1f\n\n\n\n", enemigo->vidaActual, enemigo->vidaMaxima);
+                printf("                                     %s                    \n\n\n\n", texto);
+                printf("                                       %s\n\n", personaje->nombre);
+                printf("                                          Nivel: %d\n\n", personaje->nivel);
+                printf("                                       Vida: %.1f / %.1f\n", personaje->vidaActual, personaje->vidaMaxima);
+                printf("                                       Exp: %d / %d\n", personaje->exp, personaje->expMaxima);
+                if(armaEquipada != NULL) printf("                                       Arma: %s\n", armaEquipada->nombre);
+                else printf("                                       Arma: No posee arma equipada\n");
+                if(armaduraEquipada != NULL) printf("                                       Armadura: %s\n", armaduraEquipada->nombre);
+                else printf("                                       Armadura: No posee armadura equipada\n");
+                printf("-----------------------------------------------------------------------------------------------------------\n\n");
+                printf("                                           TURNO DEL ENEMIGO                                                  ");
+
+                Sleep(2500);
+
+                danoExtra = 1;
+
+                numero = rand() % 1001;
+
+                if(numero <= (enemigo->ataqueCritico * 10) ){
+
+                    danoExtra = 1.5;
+                    strcpy(texto, "Has recibido un golpe crtico!");
+
+                }
+
+                personaje->vidaActual = personaje->vidaActual - (mayorDanoEnemigo * danoExtra);
+                if (danoExtra != 1.5) strcpy(texto, "El enemigo te ha herido");
+
+                mostrarAccionPelea(texto);
+
+                if(personaje->vidaActual <= 0){
+
+                    strcpy(texto, "Has sido derrotado..");
+                    mostrarAccionPelea(texto);
+                    Sleep(1000);
+                    return 0;
+
+                }
+
+            }
+            else if( opcion == 3){
+
+                enemigo->vidaActual = enemigo->vidaActual - personaje->ataqueMagico;
+
+                strcpy(texto, "Has herido al enemigo");
+
+                mostrarAccionPelea(texto);
+
+                if(enemigo->vidaActual <= 0){
+
+                    strcpy(texto, "Has derrotado al enemigo!");
+                    mostrarAccionPelea(texto);
+                    Sleep(1000);
+                    return 1;
+                }
+
+                clrscr();
+
+                printf("-----------------------------------------------------------------------------------------------------------\n");
+                printf("                                       %s\n\n", enemigo->nombre);
+                printf("                                       Vida: %.1f / %.1f\n\n\n\n", enemigo->vidaActual, enemigo->vidaMaxima);
+                printf("                                     %s                    \n\n\n\n", texto);
+                printf("                                       %s\n\n", personaje->nombre);
+                printf("                                          Nivel: %d\n\n", personaje->nivel);
+                printf("                                       Vida: %.1f / %.1f\n", personaje->vidaActual, personaje->vidaMaxima);
+                printf("                                       Exp: %d / %d\n", personaje->exp, personaje->expMaxima);
+                if(armaEquipada != NULL) printf("                                       Arma: %s\n", armaEquipada->nombre);
+                else printf("                                       Arma: No posee arma equipada\n");
+                if(armaduraEquipada != NULL) printf("                                       Armadura: %s\n", armaduraEquipada->nombre);
+                else printf("                                       Armadura: No posee armadura equipada\n");
+                printf("-----------------------------------------------------------------------------------------------------------\n\n");
+                printf("                                           TURNO DEL ENEMIGO                                                  ");
+
+                Sleep(2500);
+
+                danoExtra = 1;
+
+                numero = rand() % 1001;
+
+                if(numero <= (enemigo->ataqueCritico * 10) ){
+
+                    danoExtra = 1.5;
+                    strcpy(texto, "Has recibido un golpe crtico!");
+
+                }
+
+                personaje->vidaActual = personaje->vidaActual - (mayorDanoEnemigo * danoExtra);
+                if (danoExtra != 1.5) strcpy(texto, "El enemigo te ha herido");
+
+                mostrarAccionPelea(texto);
+
+                if(personaje->vidaActual <= 0){
+
+                    strcpy(texto, "Has sido derrotado..");
+                    mostrarAccionPelea(texto);
+                    Sleep(1000);
+                    return 0;
+
+                }
+
+            }
+            else{
+
+                abrirInventario(personaje);
+
+            }
+
+        }
+
+    }while(1);
 
 }
 
@@ -1224,7 +1569,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
     int i;
     for (i = 0 ; i < len ; i++){
-        Sleep(18);
+        Sleep(22);
         printf("%c", texto[i]);
 
     }
@@ -1250,6 +1595,8 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
     personaje->inventario[5] = item;
 
+    personaje->vidaActual = 1;
+
     char key;
     int opcion = 1;
 
@@ -1261,9 +1608,9 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
         printf("\n");
 
         if(opcion == 1) printf("->  Pelear contra el monstruo\n");
-        else printf("     Pelear contra el monstruo\n");
+        else printf("    Pelear contra el monstruo\n");
         if(opcion == 2) printf("->  Pasar por la puerta a tu derecha\n");
-        else printf("     Pasar por la puerta a tu derecha\n");
+        else printf("    Pasar por la puerta a tu derecha\n");
 
         printf("\n\nPresione i para abrir el inventario");
         printf("\nPresione e para abrir las estadisticas");
@@ -1294,19 +1641,9 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
     FILE * save = fopen("save.csv", "w");
     fprintf(save,"%d", 1);
 
-    Enemigo * enemigo = searchHashTable(enemigos, "Slime");
+    Enemigo * Slime = searchHashTable(enemigos, "Slime");
 
-    if(opcion == 1){
-
-        if ( pelear(personaje, enemigo) == 0 ){
-
-            printf("\nperdiste\n");
-            return;
-
-        }
-
-
-    }
+    pelear(personaje, Slime);
 
     return;
 
