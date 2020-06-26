@@ -63,4 +63,9 @@ Item * crearItem(HashTable *, char *, int);
 //crea una nueva partida
 void nuevaPartida(HashTable *, HashTable *, HashTable *, HashTable *);
 
+void mostrarHistoria (int, int);
+
+void mostrarHistoriaSinPausas (int, int);
+
+
 #endif // functions_h

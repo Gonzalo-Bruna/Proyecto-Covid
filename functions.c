@@ -1607,7 +1607,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
     }
 
     mostrarHistoria(18,19);
-    Sleep(1500);
+    Sleep(1000);
     subirNivel(personaje);
     mostrarHistoria(20,22);
 
@@ -1618,6 +1618,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
         clrscr();
 
         mostrarHistoriaSinPausas(20,22);
+        printf("\n");
 
         if(opcion == 1) printf("->  Devolverte y atacar al monstruo\n");
         else printf("    Devolverte y atacar al monstruo\n");
@@ -1653,6 +1654,8 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
     if(opcion == 1){
 
+        mostrarHistoria(24,28);
+
         Enemigo * esqueleto = searchHashTable(enemigos, "Esqueleto");
         if( pelear(personaje, esqueleto) == 0 ){
 
@@ -1661,29 +1664,149 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
         }
 
-
     }
 
+    mostrarHistoria(30,32);
 
+    opcion = 1;
+
+    do{
+
+        clrscr();
+
+        mostrarHistoriaSinPausas(30,32);
+        printf("\n");
+
+        if(opcion == 1) printf("->  Seguir adelante\n");
+        else printf("    Seguir adelante\n");
+        if(opcion == 2) printf("->  Intentar volver a la habitacion\n\n");
+        else printf("    Intentar volver a la habitacion\n\n");
+        printf("Presione i para abrir el inventario\n");
+        printf("Presione e para abrir sus estadisticas");
+
+        do{
+           key  = getch();
+        }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+        switch(key){
+            case 72: if(opcion == 1) opcion = 2;
+                    else opcion--;
+                break;
+            case 80: if(opcion == 2) opcion = 1;
+                    else opcion++;
+                break;
+            case 105: abrirInventario(personaje);
+                break;
+            case 73: abrirInventario(personaje);
+                break;
+            case 101: abrirEstadisticas(personaje);
+                break;
+            case 69:  abrirEstadisticas(personaje);
+                break;
+        }
+
+        if(key == 13){
+
+            if(opcion == 1){
+
+                break;
+
+            }
+            else{
+
+                mostrarHistoria(34,35);
+
+            }
+        }
+
+    }while(1);
+
+    mostrarHistoria(37,42);
+
+    opcion = 1;
+
+    do{
+
+        clrscr();
+
+        mostrarHistoriaSinPausas(37,42);
+        printf("\n");
+
+        if(opcion == 1) printf("->  Beber de la fuente\n");
+        else printf("    Beber de la fuente\n");
+        if(opcion == 2) printf("->  Desconfiar del liquido y seguir adelante\n\n");
+        else printf("    Desconfiar del liquido y seguir adelante\n\n");
+        printf("Presione i para abrir el inventario\n");
+        printf("Presione e para abrir sus estadisticas");
+
+        do{
+           key  = getch();
+        }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+        switch(key){
+            case 72: if(opcion == 1) opcion = 2;
+                    else opcion--;
+                break;
+            case 80: if(opcion == 2) opcion = 1;
+                    else opcion++;
+                break;
+            case 105: abrirInventario(personaje);
+                break;
+            case 73: abrirInventario(personaje);
+                break;
+            case 101: abrirEstadisticas(personaje);
+                break;
+            case 69:  abrirEstadisticas(personaje);
+                break;
+        }
+
+        if(key == 13){
+
+            if(opcion == 1){
+
+                mostrarHistoria(44,45);
+                Sleep(400);
+                float vidaAntigua = personaje->vidaActual;
+                personaje->vidaActual = personaje->vidaMaxima;
+                printf("\nVida: %.1f -> %.1f", vidaAntigua, personaje->vidaActual);
+
+            }
+            else{
+
+                mostrarHistoria(46,47);
+
+            }
+
+            break;
+        }
+
+    }while(1);
+
+    printf("\nlo que viene uwu");
+    system("pause");
     return;
 
 }
 
 void mostrarHistoria (int primeraLinea, int ultimaLinea){
 
-    clrscr();
     FILE * fp = fopen("prueba.txt", "r");
+
+    clrscr();
     int i;
     size_t len;
     int leidas=0;
     int n;
-    char linea[1024];
+    char linea[512];
     char key;
 
-    while(fgets(linea, 1023, fp) != NULL){
+    while(fgets(linea, 511, fp) != NULL){
+
         leidas++;
-        len = strlen(linea);
+
         if (leidas >= primeraLinea){
+
+            len = strlen(linea);
 
             for(n = 0 ; n < 5 ; n++){
 
@@ -1719,7 +1842,7 @@ void mostrarHistoria (int primeraLinea, int ultimaLinea){
                     Sleep(16);
                     printf("%c", linea[i]);
                     if(linea[i] == ',') Sleep(350);
-                    else if(linea[i] == '.') Sleep(450);
+                    else if(linea[i] == '.') Sleep(400);
 
                 }
 
@@ -1733,11 +1856,11 @@ void mostrarHistoria (int primeraLinea, int ultimaLinea){
 
     }
 
-    fclose(fp);
 }
 
 void mostrarHistoriaSinPausas (int primeraLinea, int ultimaLinea){
-    FILE * fp = fopen("pruebaNN.txt", "r");
+
+    FILE * fp = fopen("pruebaNoNumbers.txt", "r");
     int leidas=0;
     int n, i;
     size_t len;
