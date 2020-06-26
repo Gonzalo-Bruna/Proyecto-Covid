@@ -30,9 +30,6 @@ void cargarArmaduras(HashTable *);
 //funcion que carga las pociones del archivo pociones.csv en una tabla hash
 void cargarPociones(HashTable *);
 
-//actualiza los stats del personaje, como cuando sube de nivel y mejora sus habilidades
-void actualizarStats(Personaje *);
-
 //función que aumenta los puntos de nivel, actualiza tu vida maxima y
 void subirNivel(Personaje *);
 

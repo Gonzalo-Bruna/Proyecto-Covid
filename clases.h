@@ -10,11 +10,6 @@ typedef struct Arma{
     float ataqueCriticoCuerpo;
     float ataqueMagico;
 
-    int fuerza;
-    int agilidad;
-    int vitalidad;
-    int inteligencia;
-
     int requisitoMinimoFuerza;
     int requisitoMinimoAgilidad;
     int requisitoMinimoVitalidad;

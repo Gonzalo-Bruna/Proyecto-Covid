@@ -58,17 +58,15 @@ Personaje * crearPersonaje(char nombre[]){
     personaje->vitalidad = 1;
     personaje->inteligencia = 1;
 
-    personaje->ataqueFisico;
-    personaje->ataqueDistancia;
-    personaje->ataqueCriticoDistancia;
-    personaje->ataqueCriticoCuerpo;
-    personaje->vidaMaxima;
+    personaje->ataqueFisico = 1.5;
+    personaje->ataqueDistancia = 1;
+    personaje->ataqueCriticoDistancia = 1;
+    personaje->ataqueCriticoCuerpo = 2;
+    personaje->vidaMaxima = 6;
     personaje->vidaActual = 6;
-    personaje->ataqueMagico;
+    personaje->ataqueMagico = 2;
 
     personaje->puntosDefensa = 0;
-
-    actualizarStats(personaje);
 
     personaje->exp = 0;
     personaje->expMaxima = 500;
@@ -121,15 +119,10 @@ void cargarArmas(HashTable * armas){
         nueva->ataqueCriticoCuerpo = atof(get_csv_field(linea, 5));
         nueva->ataqueMagico = atof(get_csv_field(linea, 6));
 
-        nueva->fuerza = atoi(get_csv_field(linea, 7));
-        nueva->agilidad = atoi(get_csv_field(linea, 8));
-        nueva->vitalidad = atoi(get_csv_field(linea, 9));
-        nueva->inteligencia = atoi(get_csv_field(linea, 10));
-
-        nueva->requisitoMinimoFuerza = atoi(get_csv_field(linea, 11));
-        nueva->requisitoMinimoAgilidad = atoi(get_csv_field(linea, 12));
-        nueva->requisitoMinimoVitalidad = atoi(get_csv_field(linea, 13));
-        nueva->requisitoMinimoInteligencia = atoi(get_csv_field(linea, 14));
+        nueva->requisitoMinimoFuerza = atoi(get_csv_field(linea, 7));
+        nueva->requisitoMinimoAgilidad = atoi(get_csv_field(linea, 8));
+        nueva->requisitoMinimoVitalidad = atoi(get_csv_field(linea, 9));
+        nueva->requisitoMinimoInteligencia = atoi(get_csv_field(linea, 10));
 
         insertHashTable(armas, nueva->nombre, nueva);
     }
@@ -176,16 +169,9 @@ void cargarPociones(HashTable * pociones){
 
 }
 
-void actualizarStats(Personaje * personaje){
-    personaje->ataqueFisico = 1.5 * personaje->fuerza;
-    personaje->ataqueDistancia = 1 * personaje->agilidad;
-    personaje->ataqueCriticoDistancia = 1 * personaje->agilidad;
-    personaje->ataqueCriticoCuerpo = 1.5 * personaje->agilidad;
-    personaje->vidaMaxima = 6 * personaje->vitalidad;
-    personaje->ataqueMagico = 2 * personaje->inteligencia;
-}
-
 void subirNivel(Personaje * personaje){
+
+     clrscr();
 
     int expMaximaAntigua = personaje->expMaxima;
     int puntosHabilidadAntiguos = personaje->puntosDeHabilidad;
@@ -215,7 +201,7 @@ void subirNivel(Personaje * personaje){
     printf("    Tu nueva experiencia: %d\n", personaje->exp);
     printf("    Exp para subir al siguiente nivel: %d -> %d\n", expMaximaAntigua, personaje->expMaxima);
     printf("    Puntos de habilidad: %d -> %d\n", puntosHabilidadAntiguos, personaje->puntosDeHabilidad);
-    printf("    Puedes utilizar los puntos de habilidad en el menu de estadisticas.\n\n");
+    printf("    Puedes utilizar los puntos de habilidad en el menu de estadisticas presionando la letra e al tomar una decision.\n\n");
     system("pause");
 
 }
@@ -261,11 +247,6 @@ void equiparArma(Item * item, Personaje * personaje){
         personaje->ataqueCriticoCuerpo = personaje->ataqueCriticoCuerpo + item->arma->ataqueCriticoCuerpo;
         personaje->ataqueMagico = personaje->ataqueMagico + item->arma->ataqueMagico;
 
-        personaje->fuerza = personaje->fuerza + item->arma->fuerza;
-        personaje->agilidad = personaje->agilidad + item->arma->agilidad;
-        personaje->vitalidad = personaje->vitalidad + item->arma->vitalidad;
-        personaje->inteligencia = personaje->inteligencia + item->arma->inteligencia;
-
         printf("\nEl arma \"%s\" ha sido equipada correctamente.", item->arma->nombre);
 
     }
@@ -281,11 +262,6 @@ void desequiparArma(Item * item, Personaje * personaje){
     personaje->ataqueCriticoDistancia = personaje->ataqueCriticoDistancia - item->arma->ataqueCriticoDistancia;
     personaje->ataqueCriticoCuerpo = personaje->ataqueCriticoCuerpo - item->arma->ataqueCriticoCuerpo;
     personaje->ataqueMagico = personaje->ataqueMagico - item->arma->ataqueMagico;
-
-    personaje->fuerza = personaje->fuerza - item->arma->fuerza;
-    personaje->agilidad = personaje->agilidad - item->arma->agilidad;
-    personaje->vitalidad = personaje->vitalidad - item->arma->vitalidad;
-    personaje->inteligencia = personaje->inteligencia - item->arma->inteligencia;
 
     printf("\nEl arma \"%s\" ha sido desequipada correctamente.", item->arma->nombre);
 
@@ -372,42 +348,14 @@ void mostrarObjeto(Item * item){
         if(item->arma->ataqueCriticoCuerpo != 0){
 
             if(item->arma->ataqueCriticoCuerpo > 0) printf("        Ataque Critico a Cuerpo: %.1f\n", item->arma->ataqueCriticoCuerpo);
-            printf("        Ataque Critico a Cuerpo: %.1f\n", item->arma->ataqueCriticoCuerpo);
+            else printf("        Ataque Critico a Cuerpo: %.1f\n", item->arma->ataqueCriticoCuerpo);
 
         }
 
         if(item->arma->ataqueMagico != 0){
 
             if(item->arma->ataqueMagico > 0)  printf("        Ataque Magico: %.1f\n", item->arma->ataqueMagico);
-            printf("        Ataque Magico: %.1f\n", item->arma->ataqueMagico);
-
-        }
-
-        if(item->arma->fuerza != 0){
-
-            if(item->arma->fuerza > 0) printf("        Fuerza: +%d\n", item->arma->fuerza);
-            else printf("        Fuerza: %d\n", item->arma->fuerza);
-
-        }
-
-        if(item->arma->agilidad != 0){
-
-            if(item->arma->agilidad > 0) printf("        Agilidad: +%d\n", item->arma->agilidad);
-            else printf("        Agilidad: %d\n", item->arma->agilidad);
-
-        }
-
-        if(item->arma->vitalidad != 0){
-
-            if(item->arma->vitalidad > 0) printf("        Vitalidad: +%d\n", item->arma->vitalidad);
-            else printf("        Vitalidad: %d\n", item->arma->vitalidad);
-
-        }
-
-        if(item->arma->inteligencia != 0){
-
-            if(item->arma->inteligencia > 0) printf("        Inteligencia: +%d\n", item->arma->inteligencia);
-            else printf("        Inteligencia: %d\n", item->arma->inteligencia);
+            else printf("        Ataque Magico: %.1f\n", item->arma->ataqueMagico);
 
         }
 
@@ -517,42 +465,14 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje, bool hayA
             if(item->arma->ataqueCriticoCuerpo != 0){
 
                 if(item->arma->ataqueCriticoCuerpo > 0) printf("        Ataque Critico a Cuerpo: %.1f\n", item->arma->ataqueCriticoCuerpo);
-                printf("        Ataque Critico a Cuerpo: %.1f\n", item->arma->ataqueCriticoCuerpo);
+                else printf("        Ataque Critico a Cuerpo: %.1f\n", item->arma->ataqueCriticoCuerpo);
 
             }
 
             if(item->arma->ataqueMagico != 0){
 
                 if(item->arma->ataqueMagico > 0)  printf("        Ataque Magico: %.1f\n", item->arma->ataqueMagico);
-                printf("        Ataque Magico: %.1f\n", item->arma->ataqueMagico);
-
-            }
-
-            if(item->arma->fuerza != 0){
-
-                if(item->arma->fuerza > 0) printf("        Fuerza: +%d\n", item->arma->fuerza);
-                else printf("        Fuerza: %d\n", item->arma->fuerza);
-
-            }
-
-            if(item->arma->agilidad != 0){
-
-                if(item->arma->agilidad > 0) printf("        Agilidad: +%d\n", item->arma->agilidad);
-                else printf("        Agilidad: %d\n", item->arma->agilidad);
-
-            }
-
-            if(item->arma->vitalidad != 0){
-
-                if(item->arma->vitalidad > 0) printf("        Vitalidad: +%d\n", item->arma->vitalidad);
-                else printf("        Vitalidad: %d\n", item->arma->vitalidad);
-
-            }
-
-            if(item->arma->inteligencia != 0){
-
-                if(item->arma->inteligencia > 0) printf("        Inteligencia: +%d\n", item->arma->inteligencia);
-                else printf("        Inteligencia: %d\n", item->arma->inteligencia);
+                else printf("        Ataque Magico: %.1f\n", item->arma->ataqueMagico);
 
             }
 
@@ -1027,7 +947,7 @@ void abrirInventario(Personaje * personaje){
 
             key = getch();
 
-        }while(key != 72 && key != 80 && key != 13 && key != 105);
+        }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73);
 
         switch(key){
             case 72: if(opcion == 1) opcion = 6;
@@ -1038,7 +958,7 @@ void abrirInventario(Personaje * personaje){
                 break;
         }
 
-        if(key == 105) break;
+        if(key == 105 || key == 73) break;
 
         if(key == 13 && personaje->inventario[opcion - 1]){
 
@@ -1093,14 +1013,21 @@ void abrirEstadisticas(Personaje * personaje){
         printf("    Ataque Magico: %.1f\n", personaje->ataqueMagico);
         printf("    Probabilidad de Critico Cuerpo a Cuerpo: %.1f\n", personaje->ataqueCriticoCuerpo);
         printf("    Probabilidad de Critico a Distancia: %.1f\n", personaje->ataqueCriticoDistancia);
+        printf("\nExplicacion de estadisticas: \n");
+        printf("\n    La Fuerza aumenta tu ataque fisico");
+        printf("\n    La Agilidad aumenta tu ataque a distancia y tu probabilidad de acertar un golpe critico.");
+        printf("\n    La Inteligencia aumenta tu ataque magico.");
+        printf("\n    La Vitalidad aumenta tu vida maxima.");
+        printf("\n    La probabilidad de golpe critico es mayor para el ataque fisico");
+        printf("\n    El ataque magico no tiene probabilidad de acertar un golpe critico.\n");
         printf("\nPresione e para cerrar las estadisticas");
         printf("\nPresione enter para aumentar sus estadisticas");
 
         do{
            key  = getch();
-        }while(key != 72 && key != 80 && key != 13 && key != 101);
+        }while(key != 72 && key != 80 && key != 13 && key != 101 && key != 69);
 
-        if(key == 101) break;
+        if(key == 101 || key == 69) break;
 
         switch(key){
             case 72: if(opcion == 1) opcion = 4;
@@ -1130,29 +1057,31 @@ void abrirEstadisticas(Personaje * personaje){
                 if(opcion == 1){
 
                     personaje->fuerza++;
-                    actualizarStats(personaje);
+                    personaje->ataqueFisico += 1.5;
                     personaje->puntosDeHabilidad--;
 
                 }
                 else if(opcion == 2){
 
                     personaje->agilidad++;
-                    actualizarStats(personaje);
+                    personaje->ataqueDistancia += 1;
+                    personaje->ataqueCriticoCuerpo += 2;
+                    personaje->ataqueCriticoDistancia += 1;
                     personaje->puntosDeHabilidad--;
 
                 }
                 else if(opcion == 3){
 
                     personaje->vitalidad++;
-                    actualizarStats(personaje);
-                    personaje->vidaActual = personaje->vidaActual + 6;
+                    personaje->vidaMaxima += 6;
+                    personaje->vidaActual += 6;
                     personaje->puntosDeHabilidad--;
 
                 }
                 else{
 
                     personaje->inteligencia++;
-                    actualizarStats(personaje);
+                    personaje->ataqueMagico += 2;
                     personaje->puntosDeHabilidad--;
 
                 }
@@ -1172,8 +1101,7 @@ Item * crearItem(HashTable * items, char * nombre, int opcion){
 
     if(opcion == 1){
 
-        Arma * arma = (Arma *) malloc (sizeof(Arma));
-        arma = searchHashTable(items, nombre);
+        Arma * arma = searchHashTable(items, nombre);
 
         if(arma == NULL) return NULL;
 
@@ -1188,8 +1116,7 @@ Item * crearItem(HashTable * items, char * nombre, int opcion){
     }
     else if(opcion == 2){
 
-        Armadura * armadura = (Armadura *) malloc (sizeof(Armadura));
-        armadura = searchHashTable(items, nombre);
+        Armadura * armadura = searchHashTable(items, nombre);
 
         if(armadura == NULL) return NULL;
 
@@ -1205,8 +1132,7 @@ Item * crearItem(HashTable * items, char * nombre, int opcion){
     }
     else if(opcion == 3){
 
-        Pocion * pocion = (Pocion *) malloc (sizeof(Pocion));
-        pocion = searchHashTable(items, nombre);
+        Pocion * pocion = searchHashTable(items, nombre);
 
         if(pocion == NULL) return NULL;
 
@@ -1236,7 +1162,7 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
     int opcion = 1;
     int turno;
     int numero;
-    float danoExtra;
+    int danoExtra;
     char texto[100];
 
     //esto es para buscar el arma y armadura equipadas (siempre que lo haya)
@@ -1284,8 +1210,6 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
         if (opcion == 4) printf("                                        -> Inventario\n");
         else printf("                                           Inventario\n");
 
-        strcpy(texto, "");
-
         do{
             key = getch();
 
@@ -1296,7 +1220,6 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
             case 72: if (opcion == 2) opcion = 4;
                     else if (opcion == 4) opcion = 2;
                 break;
-
             case 80: if (opcion == 4) opcion = 2;
                      else opcion = 4;
                 break;
@@ -1311,6 +1234,9 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
 
         if(key == 13){
 
+            strcpy(texto, "");
+
+
             if(opcion == 1){
 
                 danoExtra = 1;
@@ -1319,14 +1245,14 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
 
                 if(numero <= (personaje->ataqueCriticoCuerpo * 10) ){
 
-                    danoExtra = 1.5;
+                    danoExtra = 2;
                     strcpy(texto, "Has dado un golpe crtico!");
 
                 }
 
                 enemigo->vidaActual = enemigo->vidaActual - ( (personaje->ataqueFisico * danoExtra) - enemigo->puntosDefensa);
 
-                if (danoExtra != 1.5) strcpy(texto, "Has herido al enemigo");
+                if (danoExtra != 2) strcpy(texto, "Has herido al enemigo");
 
                 mostrarAccionPelea(texto);
 
@@ -1363,13 +1289,13 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
 
                 if(numero <= (enemigo->ataqueCritico * 10) ){
 
-                    danoExtra = 1.5;
+                    danoExtra = 2;
                     strcpy(texto, "Has recibido un golpe crtico!");
 
                 }
 
                 personaje->vidaActual = personaje->vidaActual - ((enemigo->ataque * danoExtra) - personaje->puntosDefensa);
-                if (danoExtra != 1.5) strcpy(texto, "El enemigo te ha herido");
+                if (danoExtra != 2) strcpy(texto, "El enemigo te ha herido");
 
                 mostrarAccionPelea(texto);
 
@@ -1391,14 +1317,14 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
 
                 if(numero <= (personaje->ataqueCriticoDistancia * 10) ){
 
-                    danoExtra = 1.5;
+                    danoExtra = 2;
                     strcpy(texto, "Has dado un golpe crtico!");
 
                 }
 
                 enemigo->vidaActual = enemigo->vidaActual - ( (personaje->ataqueDistancia * danoExtra) - enemigo->puntosDefensa );
 
-                if (danoExtra != 1.5) strcpy(texto, "Has herido al enemigo");
+                if (danoExtra != 2) strcpy(texto, "Has herido al enemigo");
 
                 mostrarAccionPelea(texto);
 
@@ -1436,13 +1362,13 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
 
                 if(numero <= (enemigo->ataqueCritico * 10) ){
 
-                    danoExtra = 1.5;
+                    danoExtra = 2;
                     strcpy(texto, "Has recibido un golpe crtico!");
 
                 }
 
                 personaje->vidaActual = personaje->vidaActual - ((enemigo->ataque * danoExtra ) - personaje->puntosDefensa);
-                if (danoExtra != 1.5) strcpy(texto, "El enemigo te ha herido");
+                if (danoExtra != 2) strcpy(texto, "El enemigo te ha herido");
 
                 mostrarAccionPelea(texto);
 
@@ -1497,13 +1423,13 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
 
                 if(numero <= (enemigo->ataqueCritico * 10) ){
 
-                    danoExtra = 1.5;
+                    danoExtra = 2;
                     strcpy(texto, "Has recibido un golpe crtico!");
 
                 }
 
                 personaje->vidaActual = personaje->vidaActual - ( (enemigo->ataque * danoExtra) - personaje->puntosDefensa );
-                if (danoExtra != 1.5) strcpy(texto, "El enemigo te ha herido");
+                if (danoExtra != 2) strcpy(texto, "El enemigo te ha herido");
 
                 mostrarAccionPelea(texto);
 
@@ -1554,10 +1480,9 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
     }
 
-    Sleep(1100);
-    clrscr();
+    //Sleep(1100);
 
-    mostrarHistoria(2,6);
+    //mostrarHistoria(2,6);
 
     char key;
     int opcion = 1;
@@ -1566,7 +1491,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
         clrscr();
 
-        mostrarHistoriaSinPausas(5,6);
+        mostrarHistoriaSinPausas(2,6);
         printf("\n");
 
         if(opcion == 1) printf("->  Pelear contra el monstruo\n");
@@ -1579,7 +1504,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
         do{
            key  = getch();
-        }while(key != 72 && key != 105 && key != 80 && key != 13 && key != 73 && key != 101);
+        }while(key != 72 && key != 105 && key != 80 && key != 13 && key != 73 && key != 101 && key != 69);
 
         switch(key){
             case 72: if(opcion == 1) opcion = 2;
@@ -1591,6 +1516,8 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
             case 73: abrirInventario(personaje);
                 break;
             case 105: abrirInventario(personaje);
+                break;
+            case 69: abrirEstadisticas(personaje);
                 break;
             case 101: abrirEstadisticas(personaje);
 
@@ -1609,7 +1536,6 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
         if (pelear(personaje, esqueleto) == 0){
 
-            clrscr();
             mostrarHistoria(8,10);
             return;
 
@@ -1617,7 +1543,6 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
     }else{
 
-        clrscr();
         mostrarHistoria(12,16);
 
     }
@@ -1657,20 +1582,85 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
     }while(1);
 
-    switch(opcion){
+    if(opcion == 1){
 
-        case 1: ; Item * espadaDeHonos = crearItem(armas,"Espada de Honos", 1);
+        Item * espadaDeHonos = crearItem(armas,"Espada de Honos", 1);
         personaje->inventario[0] = espadaDeHonos;
-        break;
-        case 2: ; Item * dagaDeTenma = crearItem(armas,"Daga de Tenma", 1);
+
+    }
+    else if(opcion == 2){
+
+        Item * dagaDeTenma = crearItem(armas,"Daga de Tenma", 1);
         personaje->inventario[0] = dagaDeTenma;
-        break;
-        case 3: ; Item * arcoDeAttar = crearItem(armas,"Arco de Attar", 1);
+
+    }
+    else if(opcion == 3){
+
+        Item * arcoDeAttar = crearItem(armas,"Arco de Attar", 1);
         personaje->inventario[0] = arcoDeAttar;
-        break;
-        case 4: ; Item * vaculoDeHecate = crearItem(armas,"Vaculo de Hecate", 1);
-        personaje->inventario[0] = vaculoDeHecate;
-        break;
+
+    }
+    else{
+        Item * baculoDeHecate = crearItem(armas,"Baculo de Hecate", 1);
+        personaje->inventario[0] = baculoDeHecate;
+
+    }
+
+    mostrarHistoria(18,19);
+    Sleep(1500);
+    subirNivel(personaje);
+    mostrarHistoria(20,22);
+
+    opcion = 1;
+
+    do{
+
+        clrscr();
+
+        mostrarHistoriaSinPausas(20,22);
+
+        if(opcion == 1) printf("->  Devolverte y atacar al monstruo\n");
+        else printf("    Devolverte y atacar al monstruo\n");
+        if(opcion == 2) printf("->  Seguir adelante\n\n");
+        else printf("    Seguir adelante\n\n");
+        printf("Presione i para abrir el inventario\n");
+        printf("Presione e para abrir sus estadisticas");
+
+        do{
+           key  = getch();
+        }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+        switch(key){
+            case 72: if(opcion == 1) opcion = 2;
+                    else opcion--;
+                break;
+            case 80: if(opcion == 2) opcion = 1;
+                    else opcion++;
+                break;
+            case 105: abrirInventario(personaje);
+                break;
+            case 73: abrirInventario(personaje);
+                break;
+            case 101: abrirEstadisticas(personaje);
+                break;
+            case 69:  abrirEstadisticas(personaje);
+                break;
+        }
+
+        if(key == 13) break;
+
+    }while(1);
+
+    if(opcion == 1){
+
+        Enemigo * esqueleto = searchHashTable(enemigos, "Esqueleto");
+        if( pelear(personaje, esqueleto) == 0 ){
+
+            mostrarHistoria(8,10);
+            return;
+
+        }
+
 
     }
 
@@ -1680,6 +1670,8 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 }
 
 void mostrarHistoria (int primeraLinea, int ultimaLinea){
+
+    clrscr();
     FILE * fp = fopen("prueba.txt", "r");
     int i;
     size_t len;
@@ -1745,29 +1737,19 @@ void mostrarHistoria (int primeraLinea, int ultimaLinea){
 }
 
 void mostrarHistoriaSinPausas (int primeraLinea, int ultimaLinea){
-    FILE * fp = fopen("prueba.txt", "r");
+    FILE * fp = fopen("pruebaNN.txt", "r");
     int leidas=0;
     int n, i;
     size_t len;
-    char linea[1024];
+    char linea[512];
 
-    while(fgets(linea, 1023, fp) != NULL){
+    while(fgets(linea, 511, fp) != NULL){
         leidas++;
         if (leidas >= primeraLinea){
 
              len = strlen(linea);
 
-            for(n = 0 ; n < 5 ; n++){
-
-                if(linea[n] == '/') break;
-
-            }
-
-            for(i = n + 1 ; i < len ; i++){
-
-                printf("%c", linea[i]);
-
-            }
+            printf("%s", linea);
 
         }
 
