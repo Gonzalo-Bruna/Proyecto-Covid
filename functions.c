@@ -1152,6 +1152,8 @@ Item * crearItem(HashTable * items, char * nombre, int opcion){
 
 int pelear(Personaje * personaje, Enemigo * enemigo){
 
+    srand(time(0));
+
     if(!personaje || !enemigo){
 
         printf("\n\nse produjo un error\n\n"); return 0;
@@ -1246,13 +1248,21 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
                 if(numero <= (personaje->ataqueCriticoCuerpo * 10) ){
 
                     danoExtra = 2;
-                    strcpy(texto, "Has dado un golpe crtico!");
 
                 }
 
-                enemigo->vidaActual = enemigo->vidaActual - ( (personaje->ataqueFisico * danoExtra) - enemigo->puntosDefensa);
+                if(personaje->ataqueFisico > enemigo->puntosDefensa){
 
-                if (danoExtra != 2) strcpy(texto, "Has herido al enemigo");
+                    enemigo->vidaActual = enemigo->vidaActual - ( (personaje->ataqueFisico * danoExtra) - enemigo->puntosDefensa);
+                    if (danoExtra != 2) strcpy(texto, "Has herido al enemigo");
+                    else strcpy(texto, "Has dado un golpe crtico!");
+
+                }
+                else{
+
+                    strcpy(texto, "Tu ataque magico es insuficiente para herir al enemigo");
+
+                }
 
                 mostrarAccionPelea(texto);
 
@@ -1318,13 +1328,20 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
                 if(numero <= (personaje->ataqueCriticoDistancia * 10) ){
 
                     danoExtra = 2;
-                    strcpy(texto, "Has dado un golpe crtico!");
 
                 }
 
-                enemigo->vidaActual = enemigo->vidaActual - ( (personaje->ataqueDistancia * danoExtra) - enemigo->puntosDefensa );
+                if(personaje->ataqueDistancia >= enemigo->puntosDefensa){
 
-                if (danoExtra != 2) strcpy(texto, "Has herido al enemigo");
+                    enemigo->vidaActual = enemigo->vidaActual - ( (personaje->ataqueDistancia * danoExtra) - enemigo->puntosDefensa );
+                    if (danoExtra != 2) strcpy(texto, "Has herido al enemigo");
+                    else strcpy(texto, "Has dado un golpe crtico!");
+                }
+                else{
+
+                    strcpy(texto, "Tu ataque magico es insuficiente para herir al enemigo");
+
+                }
 
                 mostrarAccionPelea(texto);
 
@@ -1384,9 +1401,16 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
             }
             else if( opcion == 3){
 
-                enemigo->vidaActual = enemigo->vidaActual - (personaje->ataqueMagico - enemigo->resistenciaMagica);
+                if(personaje->ataqueMagico >= enemigo->resistenciaMagica){
 
-                strcpy(texto, "Has herido al enemigo");
+                    enemigo->vidaActual = enemigo->vidaActual - (personaje->ataqueMagico - enemigo->resistenciaMagica);
+                    strcpy(texto, "Has herido al enemigo");
+                }
+                else{
+
+                    strcpy(texto, "Tu ataque magico es insuficiente para herir al enemigo");
+
+                }
 
                 mostrarAccionPelea(texto);
 
@@ -1420,6 +1444,8 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
                 danoExtra = 1;
 
                 numero = rand() % 1001;
+                printf("critico owo: %d\n\n", numero);
+                Sleep(3000);
 
                 if(numero <= (enemigo->ataqueCritico * 10) ){
 
@@ -1657,6 +1683,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
         mostrarHistoria(24,28);
 
         Enemigo * esqueleto = searchHashTable(enemigos, "Esqueleto");
+        esqueleto->ataqueCritico = 50;
         if( pelear(personaje, esqueleto) == 0 ){
 
             mostrarHistoria(8,10);

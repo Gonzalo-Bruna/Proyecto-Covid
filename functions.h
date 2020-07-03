@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <time.h>
 
 //hace una copia del char
 char * _strdup (const char *s);
