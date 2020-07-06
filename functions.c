@@ -320,11 +320,13 @@ void desequiparArmadura(Item * item, Personaje * personaje){
 
 }
 
-void mostrarObjeto(Item * item){
+void mostrarObjeto(Item * item, int n){
 
     if (strcmp(item->tipo, "Arma") == 0){
 
-        printf("->  %s\n", item->arma->nombre);
+        if (n == 1) printf("->  %s\n", item->arma->nombre);
+        else printf("    %s\n", item->arma->nombre);
+
         printf("        Stats: \n");
 
         if(item->arma->ataqueFisico != 0){
@@ -383,7 +385,9 @@ void mostrarObjeto(Item * item){
     }
     else if(strcmp(item->tipo, "Armadura") == 0){
 
-        printf("->  %s\n", item->armadura->nombre);
+        if (n == 1) printf("->  %s\n", item->armadura->nombre);
+        else printf("    %s\n", item->armadura->nombre);
+
         printf("        Stats: \n");
 
         if(item->armadura->puntosDefensa != 0){
@@ -428,12 +432,30 @@ void mostrarObjeto(Item * item){
 
 }
 
-void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje, bool hayArma, bool hayArmadura, Item ** objetosEquipados, int lenghtObjetosEquipados){
+void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje){
+
+    Item ** objetosEquipados = (Item **) calloc (2, sizeof(Item *));
+    bool hayArma = false;
+    bool hayArmadura = false;
+    int i;
+    int cont = 0;
+
+    for (i = 0 ; i < 6 ; i++){
+
+        if(personaje->inventario[i] != NULL && personaje->inventario[i]->equipado == true){
+
+            if( strcmp(personaje->inventario[i]->tipo, "Arma") == 0 ) hayArma = true;
+            else if( strcmp(personaje->inventario[i]->tipo, "Armadura") == 0 ) hayArmadura = true;
+
+            objetosEquipados[cont] = personaje->inventario[i];
+            cont++;
+
+        }
+
+    }
 
     char key;
     int opcion = 1;
-
-    int i;
 
     do{
 
@@ -617,7 +639,6 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje, bool hayA
 
     }while(1);
 
-
     if(opcion == 1){
 
         if ( strcmp (item->tipo, "Pocion") == 0 ) {
@@ -659,9 +680,9 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje, bool hayA
                     if(hayArma == true){
 
                         //se busca el arma equipada y se quita
-                        for (i = 0 ; i < lenghtObjetosEquipados; i++){
+                        for (i = 0 ; i < 2 ; i++){
 
-                            if( strcmp(objetosEquipados[i]->tipo, "Arma") == 0 ){
+                            if( objetosEquipados[i] != NULL && strcmp(objetosEquipados[i]->tipo, "Arma") == 0 ){
 
                                 desequiparArma(objetosEquipados[i], personaje);
                                 break;
@@ -700,9 +721,9 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje, bool hayA
                     if(hayArmadura == true){
 
                         //se busca el arma equipada y se quita
-                        for (i = 0 ; i < lenghtObjetosEquipados; i++){
+                        for (i = 0 ; i < 2; i++){
 
-                            if( strcmp(objetosEquipados[i]->tipo, "Armadura") == 0 ){
+                            if( objetosEquipados[i] != NULL && strcmp(objetosEquipados[i]->tipo, "Armadura") == 0 ){
 
                                 desequiparArmadura(objetosEquipados[i], personaje);
                                 break;
@@ -775,14 +796,14 @@ void abrirInventario(Personaje * personaje){
     bool hayObjetos;
     bool hayArma;
     bool hayArmadura;
+    int cont;
     int i;
-    int cont2;
 
     do{
 
         clrscr();
 
-        int cont = 0;
+        cont = 0;
         hayObjetos = false;
         hayArma = false;
         hayArmadura = false;
@@ -791,32 +812,16 @@ void abrirInventario(Personaje * personaje){
 
             if(personaje->inventario[i] != NULL && personaje->inventario[i]->equipado == true){
 
-                hayObjetos = true;
-                break;
+                if( strcmp(personaje->inventario[i]->tipo, "Arma") == 0 ) hayArma = true;
+                else if( strcmp(personaje->inventario[i]->tipo, "Armadura") == 0 ) hayArmadura = true;
+
+                objetosEquipados[cont] = personaje->inventario[i];
+                cont++;
 
             }
 
         }
-
-        if(hayObjetos == true){
-
-            cont = 0;
-
-            for (i = 0 ; i < 6 ; i++){
-
-                if(personaje->inventario[i] != NULL && personaje->inventario[i]->equipado == true){
-
-                    if( strcmp(personaje->inventario[i]->tipo, "Arma") == 0 ) hayArma = true;
-                    else if( strcmp(personaje->inventario[i]->tipo, "Armadura") == 0 ) hayArmadura = true;
-
-                    objetosEquipados[cont] = personaje->inventario[i];
-                    cont++;
-
-                }
-
-            }
-
-        }
+        if(hayArma || hayArmadura) hayObjetos = true;
 
         printf("Oro: %d\n\n", personaje->oro);
 
@@ -849,7 +854,7 @@ void abrirInventario(Personaje * personaje){
 
             if(opcion == 1){
 
-                mostrarObjeto(personaje->inventario[0]);
+                mostrarObjeto(personaje->inventario[0], 1);
 
             }
             else printf("    %s\n", personaje->inventario[0]->nombre);
@@ -866,7 +871,7 @@ void abrirInventario(Personaje * personaje){
 
             if(opcion == 2){
 
-                mostrarObjeto(personaje->inventario[1]);
+                mostrarObjeto(personaje->inventario[1], 1);
 
             }
             else printf("    %s\n", personaje->inventario[1]->nombre);
@@ -883,7 +888,7 @@ void abrirInventario(Personaje * personaje){
 
             if(opcion == 3){
 
-                mostrarObjeto(personaje->inventario[2]);
+                mostrarObjeto(personaje->inventario[2],1);
 
             }
             else printf("    %s\n", personaje->inventario[2]->nombre);
@@ -900,7 +905,7 @@ void abrirInventario(Personaje * personaje){
 
             if(opcion == 4){
 
-                mostrarObjeto(personaje->inventario[3]);
+                mostrarObjeto(personaje->inventario[3],1);
             }
             else printf("    %s\n", personaje->inventario[3]->nombre);
 
@@ -916,7 +921,7 @@ void abrirInventario(Personaje * personaje){
 
             if(opcion == 5){
 
-                mostrarObjeto(personaje->inventario[4]);
+                mostrarObjeto(personaje->inventario[4],1);
 
             }
             else printf("    %s\n", personaje->inventario[4]->nombre);
@@ -933,7 +938,7 @@ void abrirInventario(Personaje * personaje){
 
             if(opcion == 6){
 
-                mostrarObjeto(personaje->inventario[5]);
+                mostrarObjeto(personaje->inventario[5],1);
 
             }
             else printf("    %s\n", personaje->inventario[5]->nombre);
@@ -962,11 +967,13 @@ void abrirInventario(Personaje * personaje){
 
         if(key == 13 && personaje->inventario[opcion - 1]){
 
-            verOpcionesDelObjeto(personaje->inventario[opcion - 1], opcion - 1, personaje, hayArma, hayArmadura, objetosEquipados, cont);
+            verOpcionesDelObjeto(personaje->inventario[opcion - 1], opcion - 1, personaje);
 
         }
 
     }while(1);
+
+    free(objetosEquipados);
 
 }
 
@@ -1095,6 +1102,547 @@ void abrirEstadisticas(Personaje * personaje){
 
 }
 
+void mostrarOpcionesObjetoTienda(Item * item, Personaje * personaje){
+
+    bool hayArma = false;
+    bool hayArmadura = false;
+    bool esArma = false;
+    bool esArmadura = false;
+    int i;
+
+    clrscr();
+
+    if (strcmp(item->tipo, "Arma") == 0){
+
+         esArma = true;
+
+         for (i = 0 ; i < 6 ; i++){
+
+            if(personaje->inventario[i] != NULL && personaje->inventario[i]->equipado == true){
+
+                if( strcmp(personaje->inventario[i]->tipo, "Arma") == 0 ){
+
+                    hayArma = true;
+                    break;
+
+                }
+
+            }
+
+        }
+
+    }
+    else if(strcmp(item->tipo, "Armadura") == 0){
+
+        esArmadura = true;
+
+        for (i = 0 ; i < 6 ; i++){
+
+            if(personaje->inventario[i] != NULL && personaje->inventario[i]->equipado == true){
+
+                if( strcmp(personaje->inventario[i]->tipo, "Armadura") == 0 ){
+
+                    hayArmadura = true;
+                    break;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    int opcion = 1;
+    char key;
+
+    do{
+
+        clrscr();
+
+        printf("\nStats del objeto:\n\n");
+        mostrarObjeto(item, 2);
+
+        if(esArma && hayArma){
+
+            printf("\nTu equipo actual: \n\n");
+            mostrarObjeto(personaje->inventario[i], 2);
+
+        }
+        else if(esArmadura && hayArmadura){
+
+            printf("\nTu equipo actual: \n\n");
+            mostrarObjeto(personaje->inventario[i], 2);
+
+        }
+
+        printf("\n Que desea hacer?\n");
+
+        if(opcion == 1) printf(" -> Comprar\n");
+        else printf("     Comprar\n");
+        if(opcion == 2) printf(" -> Salir\n");
+        else printf("     Salir\n");
+
+        do{
+           key  = getch();
+        }while(key != 72 && key != 80 && key != 13);
+
+        switch(key){
+            case 72: if(opcion == 1) opcion = 2;
+                    else opcion--;
+                break;
+            case 80: if(opcion == 2) opcion = 1;
+                    else opcion++;
+                break;
+
+        }
+
+        if(key == 13) break;
+
+    }while(1);
+
+    if (opcion == 1){
+
+        if(personaje->oro < item->precio){
+
+            printf("\nNo tienes oro suficiente para comprar este item");
+
+        }
+        else{
+
+            for (i = 0 ; i < 6 ; i++){
+
+                if(personaje->inventario[i] == NULL){
+
+                    item->comprado = true;
+                    personaje->inventario[i] = item;
+                    break;
+
+                }
+
+            }
+
+            if(i == 6){
+
+                printf("\nNo tiene espacio en el inventario para comprar este objeto, bote alguno");
+
+            }
+            else{
+
+                printf("\nEl objeto ha sido comprado correctamente y agregado a su inventario");
+                personaje->oro -= item->precio;
+
+            }
+
+        }
+
+    }
+    else return;
+
+    printf("\n\n");
+    system("pause");
+
+}
+
+void abrirTienda(Personaje * personaje, char * nombreArchivo, HashTable * armas, HashTable * armaduras, HashTable * pociones){
+
+    Item ** inventarioTienda = (Item **) malloc (12 * sizeof(Item *));
+
+    FILE * fp = fopen(nombreArchivo, "r");
+    if (fp == NULL){
+        printf("error al abrir el archivo");
+        return;
+    }
+
+    char linea[128];
+
+    char * nombre;
+    int precio;
+    char * tipo;
+    int cantidadObjetos = 0;
+
+    while(fgets(linea, 127, fp) != NULL){
+
+        nombre = get_csv_field(linea, 1);
+        precio = atoi(get_csv_field(linea,2));
+        tipo = get_csv_field(linea,3);
+        Item * nuevo;
+        if(strcmp(tipo, "Arma") == 0) nuevo = crearItem(armas, nombre, 1);
+        else if(strcmp(tipo, "Armadura") == 0) nuevo = crearItem(armaduras, nombre, 2);
+        else nuevo = crearItem(pociones, nombre, 3);
+
+        nuevo->precio = precio;
+        inventarioTienda[cantidadObjetos] = nuevo;
+        cantidadObjetos++;
+
+    }
+
+    int opcion = 1;
+    char key;
+
+    do{
+
+        clrscr();
+
+        printf("                                                     ~  Tienda  ~\n");
+        printf("         ------------------------------------------------------------------------------------------------------\n");
+        printf("                                                      [ Oro: %d ]\n\n", personaje->oro);
+
+        if(opcion == 1){
+
+            if (!inventarioTienda[0]->comprado) printf("                 ->  %-25s", inventarioTienda[0]->nombre);
+            else printf("                 ->  Comprado                 ");
+        }
+        else{
+
+            if (!inventarioTienda[0]->comprado) printf("                     %-25s", inventarioTienda[0]->nombre);
+            else printf("                     Comprado                 ");
+        }
+
+        if(opcion == 2){
+
+            if(!inventarioTienda[1]->comprado) printf(" ->  %-25s", inventarioTienda[1]->nombre);
+            else printf(" ->  Comprado                 ");
+
+        }
+        else{
+
+            if(!inventarioTienda[1]->comprado) printf("     %-25s", inventarioTienda[1]->nombre);
+            else printf("     Comprado                 ");
+        }
+
+        if(opcion == 3){
+
+            if(!inventarioTienda[2]->comprado) printf(" ->  %-25s\n", inventarioTienda[2]->nombre);
+            else printf(" ->  Comprado                 \n", inventarioTienda[2]->nombre);
+
+        }
+        else{
+
+            if(!inventarioTienda[2]->comprado) printf("     %-25s\n", inventarioTienda[2]->nombre);
+            else printf("     Comprado                 \n");
+
+        }
+
+        if(!inventarioTienda[0]->comprado) printf("                     [ costo: %4d ]", inventarioTienda[0]->precio);
+        else printf("                     [ costo: ---- ]");
+        if(!inventarioTienda[1]->comprado) printf("               [  costo: %4d ]", inventarioTienda[1]->precio);
+        else printf("               [  costo: ---- ]");
+        if (!inventarioTienda[2]->comprado) printf("              [  costo: %4d ]\n\n", inventarioTienda[2]->precio);
+        else printf("              [  costo: ---- ]\n\n");
+
+
+        if(opcion == 4){
+
+            if (!inventarioTienda[3]->comprado) printf("                 ->  %-25s", inventarioTienda[3]->nombre);
+            else printf("                 ->  Comprado                 ");
+        }
+        else{
+
+            if (!inventarioTienda[3]->comprado) printf("                     %-25s", inventarioTienda[3]->nombre);
+            else printf("                     Comprado                 ");
+        }
+
+        if(opcion == 5){
+
+            if(!inventarioTienda[4]->comprado) printf(" ->  %-25s", inventarioTienda[4]->nombre);
+            else printf(" ->  Comprado                 ");
+
+        }
+        else{
+
+            if(!inventarioTienda[4]->comprado) printf("     %-25s", inventarioTienda[4]->nombre);
+            else printf("     Comprado                 ");
+        }
+
+        if(opcion == 6){
+
+            if(!inventarioTienda[5]->comprado) printf(" ->  %-25s\n", inventarioTienda[5]->nombre);
+            else printf(" ->  Comprado                 \n", inventarioTienda[5]->nombre);
+
+        }
+        else{
+
+            if(!inventarioTienda[5]->comprado) printf("     %-25s\n", inventarioTienda[5]->nombre);
+            else printf("     Comprado                 \n");
+
+        }
+
+        if(!inventarioTienda[3]->comprado) printf("                     [ costo: %4d ]", inventarioTienda[3]->precio);
+        else printf("                     [ costo: ---- ]");
+        if(!inventarioTienda[4]->comprado) printf("               [  costo: %4d ]", inventarioTienda[4]->precio);
+        else printf("               [  costo: ---- ]");
+        if (!inventarioTienda[5]->comprado) printf("              [  costo: %4d ]\n\n", inventarioTienda[5]->precio);
+        else printf("              [  costo: ---- ]\n\n");
+
+        if(opcion == 7){
+
+            if (!inventarioTienda[6]->comprado) printf("                 ->  %-25s", inventarioTienda[6]->nombre);
+            else printf("                 ->  Comprado                 ");
+        }
+        else{
+
+            if (!inventarioTienda[6]->comprado) printf("                     %-25s", inventarioTienda[6]->nombre);
+            else printf("                     Comprado                 ");
+        }
+
+        if(opcion == 8){
+
+            if(!inventarioTienda[7]->comprado) printf(" ->  %-25s", inventarioTienda[7]->nombre);
+            else printf(" ->  Comprado                 ");
+
+        }
+        else{
+
+            if(!inventarioTienda[7]->comprado) printf("     %-25s", inventarioTienda[7]->nombre);
+            else printf("     Comprado                 ");
+        }
+
+        if(opcion == 9){
+
+            if(!inventarioTienda[8]->comprado) printf(" ->  %-25s\n", inventarioTienda[8]->nombre);
+            else printf(" ->  Comprado                 \n", inventarioTienda[8]->nombre);
+
+        }
+        else{
+
+            if(!inventarioTienda[8]->comprado) printf("     %-25s\n", inventarioTienda[8]->nombre);
+            else printf("     Comprado                 \n");
+
+        }
+
+        if(!inventarioTienda[6]->comprado) printf("                     [ costo: %4d ]", inventarioTienda[6]->precio);
+        else printf("                     [ costo: ---- ]");
+        if(!inventarioTienda[7]->comprado) printf("               [  costo: %4d ]", inventarioTienda[7]->precio);
+        else printf("               [  costo: ---- ]");
+        if(!inventarioTienda[8]->comprado) printf("              [  costo: %4d ]\n\n", inventarioTienda[8]->precio);
+        else printf("              [  costo: ---- ]\n\n");
+
+        if(opcion == 10){
+
+            if (!inventarioTienda[9]->comprado) printf("                 ->  %-25s", inventarioTienda[9]->nombre);
+            else printf("                 ->  Comprado                 ");
+        }
+        else{
+
+            if (!inventarioTienda[9]->comprado) printf("                     %-25s", inventarioTienda[9]->nombre);
+            else printf("                     Comprado                 ");
+        }
+
+        if(opcion == 11){
+
+            if(!inventarioTienda[10]->comprado) printf(" ->  %-25s", inventarioTienda[10]->nombre);
+            else printf(" ->  Comprado                 ");
+
+        }
+        else{
+
+            if(!inventarioTienda[10]->comprado) printf("     %-25s", inventarioTienda[10]->nombre);
+            else printf("     Comprado                 ");
+        }
+
+        if(opcion == 12){
+
+            if(!inventarioTienda[11]->comprado) printf(" ->  %-25s\n", inventarioTienda[11]->nombre);
+            else printf(" ->  Comprado                 \n", inventarioTienda[11]->nombre);
+
+        }
+        else{
+
+            if(!inventarioTienda[11]->comprado) printf("     %-25s\n", inventarioTienda[11]->nombre);
+            else printf("     Comprado                 \n");
+
+        }
+
+        if(!inventarioTienda[9]->comprado) printf("                     [ costo: %4d ]", inventarioTienda[9]->precio);
+        else printf("                     [ costo: ---- ]");
+        if(!inventarioTienda[10]->comprado) printf("               [  costo: %4d ]", inventarioTienda[10]->precio);
+        else printf("               [  costo: ---- ]");
+        if (!inventarioTienda[11]->comprado) printf("              [  costo: %4d ]\n\n", inventarioTienda[11]->precio);
+        else printf("              [  costo: ---- ]\n\n");
+
+        printf("         ------------------------------------------------------------------------------------------------------\n\n");
+
+        printf("                                                   Inventario\n\n");
+
+        if(personaje->inventario[0] == NULL){
+
+            if(opcion == 13) printf("             ->  [1] Vacio                    ");
+            else printf("                 [1] Vacio                    ");
+
+        }
+        else{
+
+            if(opcion == 13) printf("             ->  [1] %-25s", personaje->inventario[0]->nombre);
+            else printf("                 [1] %-25s", personaje->inventario[0]->nombre);
+
+        }
+
+        if(personaje->inventario[1] == NULL){
+
+            if(opcion == 14) printf(" ->  [2] Vacio                    ");
+            else printf("     [2] Vacio                    ");
+
+        }
+        else{
+
+            if(opcion == 14) printf(" ->  [2] %-25s", personaje->inventario[1]->nombre);
+            else printf("     [2] %-25s", personaje->inventario[1]->nombre);
+
+        }
+
+        if(personaje->inventario[2] == NULL){
+
+            if(opcion == 15) printf(" ->  [3] Vacio\n\n");
+            else printf("     [3] Vacio\n\n");
+
+        }
+        else{
+
+            if(opcion == 15) printf(" ->  [3] %-25s\n", personaje->inventario[2]->nombre);
+            else printf("     [3] %-25s\n", personaje->inventario[2]->nombre);
+
+        }
+
+        printf("\n");
+
+        if(personaje->inventario[3] == NULL){
+
+            if(opcion == 16) printf("             ->  [4] Vacio                    ");
+            else printf("                 [4] Vacio                    ");
+
+        }
+        else{
+
+            if(opcion == 16) printf("             ->  [4] %-25s", personaje->inventario[3]->nombre);
+            else printf("                 [4] %-25s", personaje->inventario[3]->nombre);
+
+        }
+
+        if(personaje->inventario[4] == NULL){
+
+            if(opcion == 17) printf(" ->  [5] Vacio                    ");
+            else printf("     [5] Vacio                    ");
+
+        }
+        else{
+
+            if(opcion == 17) printf(" ->  [5] %-25s", personaje->inventario[4]->nombre);
+            else printf("     [5] %-25s", personaje->inventario[4]->nombre);
+
+        }
+
+        if(personaje->inventario[5] == NULL){
+
+            if(opcion == 18) printf(" ->  [6] Vacio\n\n");
+            else printf("     [6] Vacio\n\n");
+
+        }
+        else{
+
+            if(opcion == 18) printf(" ->  [6] %-25s\n", personaje->inventario[5]->nombre);
+            else printf("     [6] %-25s\n", personaje->inventario[5]->nombre);
+
+        }
+
+
+        printf("\n\n                             Puede ingresar al menu del inventario presionando la letra i");
+
+        do{
+            key = getch();
+        }while(key != 13 && key != 72 && key != 80 && key != 77 && key != 75 && key != 73 && key != 105); //derecha 77 izquierda 75
+
+        if(key == 13){
+
+            if(opcion >= 1 && opcion <= 12){
+
+                if(!inventarioTienda[opcion-1]->comprado) mostrarOpcionesObjetoTienda(inventarioTienda[opcion-1], personaje);
+
+            }
+            else{
+
+                verOpcionesDelObjeto(personaje->inventario[opcion-13], opcion - 13, personaje);
+
+            }
+
+        }
+        else if(key == 105 || key == 73){
+                if(opcion >= 1 && opcion <= 12) opcion = 13;
+                else opcion = 1;
+        }else{
+
+            switch(key){
+
+                case 72: if(opcion >= 1 && opcion <= 12) {
+
+                        if (opcion == 1 || opcion == 2 || opcion == 3) opcion += 9;//arriba
+                        else opcion -= 3;
+
+                    }
+                    else{
+
+                        if (opcion == 13 || opcion == 14 || opcion == 15) opcion += 3;//arriba
+                        else opcion -= 3;
+
+                    }
+                    break;
+
+                case 80: if(opcion >= 1 && opcion <= 12) {
+
+                        if (opcion == 10 || opcion == 11 || opcion == 12) opcion -= 9; //abajo
+                        else opcion += 3;
+
+                     }
+                    else{
+
+                        if (opcion == 16 || opcion == 17 || opcion == 18) opcion -= 3; //abajo
+                        else opcion += 3;
+
+                    }
+                    break;
+
+                case 75:if(opcion >= 1 && opcion <= 12){
+
+                        if (opcion == 1 || opcion == 4 || opcion == 7 || opcion == 10) opcion += 2; //izquierda
+                        else opcion--;
+
+                    }
+                    else{
+
+                        if (opcion == 13 || opcion == 16) opcion += 2; //izquierda
+                        else opcion--;
+
+                    }
+
+                    break;
+
+                case 77:if(opcion >= 1 && opcion <= 12){
+
+                        if (opcion == 3 || opcion == 6 || opcion == 9 || opcion == 12) opcion -= 2; //derecha
+                        else opcion++;
+
+                    }
+                    else{
+
+                        if (opcion == 15 || opcion == 18) opcion -= 2; //derecha
+                        else opcion++;
+
+                    }
+                    break;
+            }
+
+        }
+
+    }while(1);
+
+    free(inventarioTienda);
+
+    printf("\n\n");
+    system("pause");
+
+
+}
+
 Item * crearItem(HashTable * items, char * nombre, int opcion){
 
     Item * item = (Item *) malloc (sizeof(Item));
@@ -1108,7 +1656,6 @@ Item * crearItem(HashTable * items, char * nombre, int opcion){
         item->tipo = "Arma";
         item->nombre = arma->nombre;
         item->arma = arma;
-        item->equipado = false;
 
         item->armadura = NULL;
         item->pocion = NULL;
@@ -1123,7 +1670,6 @@ Item * crearItem(HashTable * items, char * nombre, int opcion){
         item->tipo = "Armadura";
         item->nombre = armadura->nombre;
         item->armadura = armadura;
-        item->equipado = false;
 
         item->arma = NULL;
         item->pocion = NULL;
@@ -1139,13 +1685,15 @@ Item * crearItem(HashTable * items, char * nombre, int opcion){
         item->tipo = "Pocion";
         item->nombre = pocion->nombre;
         item->pocion = pocion;
-        item->equipado = false;
 
         item->arma = NULL;
         item->armadura = NULL;
 
     }
 
+    item->equipado = false;
+    item->comprado = false;
+    item->precio = 0;
     return item;
 
 }
@@ -1237,7 +1785,6 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
         if(key == 13){
 
             strcpy(texto, "");
-
 
             if(opcion == 1){
 
@@ -1497,18 +2044,17 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
     strcat(texto, nombreJugador);
     strcat(texto, "!");
 
-    size_t len = strlen(texto);
 
-    int i;
-    for (i = 0 ; i < len ; i++){
-        Sleep(22);
-        printf("%c", texto[i]);
+    Item * item = crearItem(armas, "Baculo de Hecate", 1);
+    item->equipado = true;
+    personaje->inventario[0] = item;
+    personaje->oro = 5000;
 
-    }
+    abrirTienda(personaje, "armas_tienda.csv", armas, armaduras, pociones);
 
-    //Sleep(1100);
+    Sleep(1100);
 
-    //mostrarHistoria(2,6);
+    mostrarHistoria(2,6);
 
     char key;
     int opcion = 1;
@@ -1610,7 +2156,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
     if(opcion == 1){
 
-        Item * espadaDeHonos = crearItem(armas,"Espada de Honos", 1);
+        Item * espadaDeHonos = crearItem(armas, "Espada de Honos", 1);
         personaje->inventario[0] = espadaDeHonos;
 
     }
@@ -1633,7 +2179,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
     }
 
     mostrarHistoria(18,19);
-    Sleep(1000);
+    Sleep(800);
     subirNivel(personaje);
     mostrarHistoria(20,22);
 
@@ -1683,7 +2229,6 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
         mostrarHistoria(24,28);
 
         Enemigo * esqueleto = searchHashTable(enemigos, "Esqueleto");
-        esqueleto->ataqueCritico = 50;
         if( pelear(personaje, esqueleto) == 0 ){
 
             mostrarHistoria(8,10);
@@ -1858,8 +2403,6 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
             case 69:  abrirEstadisticas(personaje);
                 break;
         }
-
-
 
     }while(1);
 

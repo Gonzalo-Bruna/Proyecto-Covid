@@ -45,6 +45,8 @@ typedef struct Item{
     Pocion * pocion;
     char * tipo;
     bool equipado;
+    bool comprado;
+    int precio;
 
 } Item;
 

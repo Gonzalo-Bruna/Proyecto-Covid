@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <time.h>
+#include <string.h>
 
 //hace una copia del char
 char * _strdup (const char *s);
@@ -46,16 +47,22 @@ void equiparArmadura(Item *, Personaje *);
 //desequipa una armadura y resta los stats al personaje
 void desequiparArmadura(Item *, Personaje *);
 
-//muestra las caracteristicas del item seleccionado
-void mostrarObjeto(Item *);
+/* muestra las caracteristicas del item seleccionado, el segundo parametro, si recibe 1 muestra el objeto con una flecha (se abrió
+ dentro del inventario, si es 2, se muestra sin la flecha (se abrió desde la tienda))
+ */
+void mostrarObjeto(Item *, int);
 
 //muestra las opciones de un objeto (equipar, utilizar, entre otras)
-void verOpcionesDelObjeto(Item *, int, Personaje *, bool, bool, Item **, int);
+void verOpcionesDelObjeto(Item *, int, Personaje *);
 
 //función que abre el inventario
 void abrirInventario(Personaje *);
 
 void abrirEstadisticas(Personaje *);
+
+void mostrarOpcionesObjetoTienda(Item *, Personaje *);
+
+void abrirTienda(Personaje *, char *, HashTable *, HashTable *, HashTable *);
 
 /* crea un item, proporcionado por la tabla hash (púede ser arma, armadura o pocion)
    si es que el tercer parametro es 1, se busca crear un arma, si el parmametro es 2 una amardura, si es 3 una pocion */

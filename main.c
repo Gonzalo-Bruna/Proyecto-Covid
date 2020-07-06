@@ -15,6 +15,10 @@ int main(){
     cargarPociones(pociones);
     cargarEnemigos(enemigos);
 
+    char texto[28];
+    strcpy(texto, "ANOTHER QUARENTINE RPG GAME");
+    mostrarLetraPorLetra(texto);
+
     do{
 
         clrscr();
