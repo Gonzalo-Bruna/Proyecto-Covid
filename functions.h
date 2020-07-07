@@ -9,11 +9,15 @@
 #include <time.h>
 #include <string.h>
 
+/* FUNCIONES PARA USO GENERAL*/
+
 //Realiza una copia del char pasado por parametro.
 char * _strdup (const char *s);
 
 //Lee un campo de un archivo csv.
 const char *get_csv_field (char * tmp, int i);
+
+/* FUNCIONES PARA MOSTRAR TEXTO EN PANTALLA */
 
 //Recibe un puntero a char, muestra el texto letra por letra con cierta lentitud, utilizando la funcion sleep.
 void mostrarLetraPorLetra(char *);
@@ -22,8 +26,15 @@ void mostrarLetraPorLetra(char *);
 esto es para mostrar correctamente el texto en la función de pelea. */
 void mostrarAccionPelea(char *);
 
-//Crea un personaje nuevo, inicializando los miembros del personaje y lo retorna.
-Personaje * crearPersonaje(char[]);
+/*Se encarga de mostrar la historia del archivo csv que creamos, el algoritmo muestra las lineas pasadas por parametro, por ejemplo,
+si paso el 2 y el 6, mostrará desde la linea 2 a la 6 de manera lenta (como el texto de pokemon), si se apreta el espacio, se salta la "animación"*/
+void mostrarHistoria (int, int);
+
+/*Muestra el texto de las lineas pasadas por parametro, pero a diferencia de la función mostrarHistoria, esta lo hace sin ningún tipo de
+"animación", solamente muestra el texto por pantalla.*/
+void mostrarHistoriaSinPausas (int, int);
+
+/* FUNCIONES DE CARGA DESDE ARCHIVOS CSV */
 
 //Esta funcion que carga las armas del archivo armas.csv en una tabla hash.
 void cargarArmas(HashTable *);
@@ -33,6 +44,21 @@ void cargarArmaduras(HashTable *);
 
 //Funcion que carga las pociones del archivo pociones.csv en una tabla hash.
 void cargarPociones(HashTable *);
+
+//Carga los enemigos del arhcivo enemigos.csv en una tabla hash.
+void cargarEnemigos(HashTable *);
+
+/* FUNCIONES DE CREACIÓN DE STRUCTS */
+
+//Crea un personaje nuevo, inicializando los miembros del personaje y lo retorna.
+Personaje * crearPersonaje(char[]);
+
+/*Crea un item, proporcionado por la tabla hash (púede ser arma, armadura o pocion) que recibe por parametro, recibe el nombre del item
+(para buscarlo en su respectiva tabla), y por último un número.
+ Si es que el tercer parametro es 1, se busca crear un arma, si es 2 una amardura, si es 3 una pocion */
+Item * crearItem(HashTable *, char *, int);
+
+/* FUNCIONES NECESARIAS PARA LA LOGICA DEL JUEGO ( INVENTARIO, TIENDA, SUBIR NIVEL, EQUIPAR ITEMS ) */
 
 //Función que aumenta los puntos de nivel, actualiza la vida maxima del personaje y muestra por pantalla los nuevos stats.
 void subirNivel(Personaje *);
@@ -73,22 +99,14 @@ mostrarOpcionesObjetoTienda para mostrar las opciones y poder realizar compras, 
 y además puedes moverte a tu inventario que se muestra más abajo presionando la letra i.*/
 void abrirTienda(Personaje *, char *, HashTable *, HashTable *, HashTable *);
 
-/*Crea un item, proporcionado por la tabla hash (púede ser arma, armadura o pocion) que recibe por parametro, recibe el nombre del item
-(para buscarlo en su respectiva tabla), y por último un número.
- Si es que el tercer parametro es 1, se busca crear un arma, si es 2 una amardura, si es 3 una pocion */
-Item * crearItem(HashTable *, char *, int);
+/* La función pelear recibe como parametro al personaje, y el enemigo con el que se va a enfrentar, utiliza un algoritmo que proporcionará
+golpes criticos de manera random (dependiento de la probabilidad del enemigo y del personaje de dar golpes críticos), muestra los sucesos
+en el medio de la pantalla, e indica si perdiste o ganaste.
+Si ganas retorna 1, en caso contrario retorna 0.*/
+int pelear(Personaje *, Enemigo *);
 
 /*Funcion principal 1, se encarga de crear una nueva partida, mostrando la historia de manera lineal haciendo uso de
  las funciones definidas anteriormente. Recibe como parametro las 4 tablas hash correspondientes. */
 void nuevaPartida(HashTable *, HashTable *, HashTable *, HashTable *);
-
-/*Se encarga de mostrar la historia del archivo csv que creamos, el algoritmo muestra las lineas pasadas por parametro, por ejemplo,
-si paso el 2 y el 6, mostrará desde la linea 2 a la 6 de manera lenta (como el texto de pokemon), si se apreta el espacio, se salta la "animación"*/
-void mostrarHistoria (int, int);
-
-/*Muestra el texto de las lineas pasadas por parametro, pero a diferencia de la función mostrarHistoria, esta lo hace sin ningún tipo de
-"animación", solamente muestra el texto por pantalla.*/
-void mostrarHistoriaSinPausas (int, int);
-
 
 #endif // functions_h

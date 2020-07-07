@@ -45,61 +45,99 @@ void mostrarAccionPelea(char * texto){
 
 }
 
-Personaje * crearPersonaje(char nombre[]){
+void mostrarHistoria (int primeraLinea, int ultimaLinea){
 
-    Personaje * personaje = (Personaje *) malloc (sizeof(Personaje));
-    strcpy(personaje->nombre, nombre);
+    FILE * fp = fopen("prueba.txt", "r");
 
-    personaje->nivel = 0;
-    personaje->puntosDeHabilidad = 0;
+    clrscr();
+    int i;
+    size_t len;
+    int leidas=0;
+    int n;
+    char linea[512];
+    char key;
 
-    personaje->fuerza = 1;
-    personaje->agilidad = 1;
-    personaje->vitalidad = 1;
-    personaje->inteligencia = 1;
+    while(fgets(linea, 511, fp) != NULL){
 
-    personaje->ataqueFisico = 1.5;
-    personaje->ataqueDistancia = 1;
-    personaje->ataqueCriticoDistancia = 1;
-    personaje->ataqueCriticoCuerpo = 2;
-    personaje->vidaMaxima = 6;
-    personaje->vidaActual = 6;
-    personaje->ataqueMagico = 2;
+        leidas++;
 
-    personaje->puntosDefensa = 0;
+        if (leidas >= primeraLinea){
 
-    personaje->exp = 0;
-    personaje->expMaxima = 500;
-    personaje->oro = 0;
+            len = strlen(linea);
 
-    personaje->inventario = (Item **) calloc (6, sizeof(Item *));
+            for(n = 0 ; n < 5 ; n++){
 
-    return personaje;
+                if(linea[n] == '/') break;
+
+            }
+
+            for(i = n + 1 ; i < len ; i++){
+
+                if(kbhit()){
+
+                    key = getch();
+
+                    if(key == 32){
+
+                        for(i; i < len ; i++){
+
+                            printf("%c", linea[i]);
+
+                        }
+
+                    }
+                    else{
+                        Sleep(16);
+                        printf("%c", linea[i]);
+                        if(linea[i] == ',') Sleep(350);
+                        else if(linea[i] == '.') Sleep(450);
+                    }
+
+                }
+                else{
+
+                    Sleep(16);
+                    printf("%c", linea[i]);
+                    if(linea[i] == ',') Sleep(350);
+                    else if(linea[i] == '.') Sleep(400);
+
+                }
+
+            }
+
+        Sleep(450);
+
+        }
+
+        if (leidas == ultimaLinea) break;
+
+    }
 
 }
 
-void cargarEnemigos(HashTable * enemigos){
+void mostrarHistoriaSinPausas (int primeraLinea, int ultimaLinea){
 
-    FILE * fp = fopen("enemigos.csv", "r");
-    if(fp == NULL) return;
-    char linea[128];
+    FILE * fp = fopen("pruebaNoNumbers.txt", "r");
+    int leidas=0;
+    int n, i;
+    size_t len;
+    char linea[512];
 
-    while(fgets(linea, 127, fp) != NULL){
+    while(fgets(linea, 511, fp) != NULL){
+        leidas++;
+        if (leidas >= primeraLinea){
 
-        Enemigo * nuevo = (Enemigo *) malloc (sizeof(Enemigo));
+             len = strlen(linea);
 
-        nuevo->nombre = get_csv_field(linea, 1);
-        nuevo->ataque = atof(get_csv_field(linea, 2));
-        nuevo->ataqueCritico = atof(get_csv_field(linea, 3));
+            printf("%s", linea);
 
-        nuevo->vidaMaxima = atof(get_csv_field(linea, 4));
-        nuevo->vidaActual = atof(get_csv_field(linea, 4));
-        nuevo->puntosDefensa = atof(get_csv_field(linea, 5));
-        nuevo->resistenciaMagica = atof(get_csv_field(linea, 6));
+        }
 
-        insertHashTable(enemigos, nuevo->nombre, nuevo);
+        if (leidas == ultimaLinea) break;
+
     }
 
+    fclose(fp);
 }
 
 void cargarArmas(HashTable * armas){
@@ -166,6 +204,118 @@ void cargarPociones(HashTable * pociones){
 
         insertHashTable(pociones, nueva->nombre, nueva);
     }
+
+}
+
+void cargarEnemigos(HashTable * enemigos){
+
+    FILE * fp = fopen("enemigos.csv", "r");
+    if(fp == NULL) return;
+    char linea[128];
+
+    while(fgets(linea, 127, fp) != NULL){
+
+        Enemigo * nuevo = (Enemigo *) malloc (sizeof(Enemigo));
+
+        nuevo->nombre = get_csv_field(linea, 1);
+        nuevo->ataque = atof(get_csv_field(linea, 2));
+        nuevo->ataqueCritico = atof(get_csv_field(linea, 3));
+
+        nuevo->vidaMaxima = atof(get_csv_field(linea, 4));
+        nuevo->vidaActual = atof(get_csv_field(linea, 4));
+        nuevo->puntosDefensa = atof(get_csv_field(linea, 5));
+        nuevo->resistenciaMagica = atof(get_csv_field(linea, 6));
+
+        insertHashTable(enemigos, nuevo->nombre, nuevo);
+    }
+
+}
+
+Personaje * crearPersonaje(char nombre[]){
+
+    Personaje * personaje = (Personaje *) malloc (sizeof(Personaje));
+    strcpy(personaje->nombre, nombre);
+
+    personaje->nivel = 0;
+    personaje->puntosDeHabilidad = 0;
+
+    personaje->fuerza = 1;
+    personaje->agilidad = 1;
+    personaje->vitalidad = 1;
+    personaje->inteligencia = 1;
+
+    personaje->ataqueFisico = 1.5;
+    personaje->ataqueDistancia = 1;
+    personaje->ataqueCriticoDistancia = 1;
+    personaje->ataqueCriticoCuerpo = 2;
+    personaje->vidaMaxima = 6;
+    personaje->vidaActual = 6;
+    personaje->ataqueMagico = 2;
+
+    personaje->puntosDefensa = 0;
+
+    personaje->exp = 0;
+    personaje->expMaxima = 500;
+    personaje->oro = 0;
+
+    personaje->inventario = (Item **) calloc (6, sizeof(Item *));
+
+    return personaje;
+
+}
+
+Item * crearItem(HashTable * items, char * nombre, int opcion){
+
+    Item * item = (Item *) malloc (sizeof(Item));
+
+    if(opcion == 1){
+
+        Arma * arma = searchHashTable(items, nombre);
+
+        if(arma == NULL) return NULL;
+
+        item->tipo = "Arma";
+        item->nombre = arma->nombre;
+        item->arma = arma;
+
+        item->armadura = NULL;
+        item->pocion = NULL;
+
+    }
+    else if(opcion == 2){
+
+        Armadura * armadura = searchHashTable(items, nombre);
+
+        if(armadura == NULL) return NULL;
+
+        item->tipo = "Armadura";
+        item->nombre = armadura->nombre;
+        item->armadura = armadura;
+
+        item->arma = NULL;
+        item->pocion = NULL;
+
+
+    }
+    else if(opcion == 3){
+
+        Pocion * pocion = searchHashTable(items, nombre);
+
+        if(pocion == NULL) return NULL;
+
+        item->tipo = "Pocion";
+        item->nombre = pocion->nombre;
+        item->pocion = pocion;
+
+        item->arma = NULL;
+        item->armadura = NULL;
+
+    }
+
+    item->equipado = false;
+    item->comprado = false;
+    item->precio = 0;
+    return item;
 
 }
 
@@ -1643,61 +1793,6 @@ void abrirTienda(Personaje * personaje, char * nombreArchivo, HashTable * armas,
 
 }
 
-Item * crearItem(HashTable * items, char * nombre, int opcion){
-
-    Item * item = (Item *) malloc (sizeof(Item));
-
-    if(opcion == 1){
-
-        Arma * arma = searchHashTable(items, nombre);
-
-        if(arma == NULL) return NULL;
-
-        item->tipo = "Arma";
-        item->nombre = arma->nombre;
-        item->arma = arma;
-
-        item->armadura = NULL;
-        item->pocion = NULL;
-
-    }
-    else if(opcion == 2){
-
-        Armadura * armadura = searchHashTable(items, nombre);
-
-        if(armadura == NULL) return NULL;
-
-        item->tipo = "Armadura";
-        item->nombre = armadura->nombre;
-        item->armadura = armadura;
-
-        item->arma = NULL;
-        item->pocion = NULL;
-
-
-    }
-    else if(opcion == 3){
-
-        Pocion * pocion = searchHashTable(items, nombre);
-
-        if(pocion == NULL) return NULL;
-
-        item->tipo = "Pocion";
-        item->nombre = pocion->nombre;
-        item->pocion = pocion;
-
-        item->arma = NULL;
-        item->armadura = NULL;
-
-    }
-
-    item->equipado = false;
-    item->comprado = false;
-    item->precio = 0;
-    return item;
-
-}
-
 int pelear(Personaje * personaje, Enemigo * enemigo){
 
     srand(time(0));
@@ -2410,99 +2505,4 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
     system("pause");
     return;
 
-}
-
-void mostrarHistoria (int primeraLinea, int ultimaLinea){
-
-    FILE * fp = fopen("prueba.txt", "r");
-
-    clrscr();
-    int i;
-    size_t len;
-    int leidas=0;
-    int n;
-    char linea[512];
-    char key;
-
-    while(fgets(linea, 511, fp) != NULL){
-
-        leidas++;
-
-        if (leidas >= primeraLinea){
-
-            len = strlen(linea);
-
-            for(n = 0 ; n < 5 ; n++){
-
-                if(linea[n] == '/') break;
-
-            }
-
-            for(i = n + 1 ; i < len ; i++){
-
-                if(kbhit()){
-
-                    key = getch();
-
-                    if(key == 32){
-
-                        for(i; i < len ; i++){
-
-                            printf("%c", linea[i]);
-
-                        }
-
-                    }
-                    else{
-                        Sleep(16);
-                        printf("%c", linea[i]);
-                        if(linea[i] == ',') Sleep(350);
-                        else if(linea[i] == '.') Sleep(450);
-                    }
-
-                }
-                else{
-
-                    Sleep(16);
-                    printf("%c", linea[i]);
-                    if(linea[i] == ',') Sleep(350);
-                    else if(linea[i] == '.') Sleep(400);
-
-                }
-
-            }
-
-        Sleep(450);
-
-        }
-
-        if (leidas == ultimaLinea) break;
-
-    }
-
-}
-
-void mostrarHistoriaSinPausas (int primeraLinea, int ultimaLinea){
-
-    FILE * fp = fopen("pruebaNoNumbers.txt", "r");
-    int leidas=0;
-    int n, i;
-    size_t len;
-    char linea[512];
-
-    while(fgets(linea, 511, fp) != NULL){
-        leidas++;
-        if (leidas >= primeraLinea){
-
-             len = strlen(linea);
-
-            printf("%s", linea);
-
-        }
-
-        if (leidas == ultimaLinea) break;
-
-    }
-
-    fclose(fp);
 }
