@@ -195,7 +195,7 @@ void subirNivel(Personaje * personaje){
     char * texto = "Felicidades, has subido de nivel!";
     mostrarLetraPorLetra(texto);
 
-    Sleep(1000);
+    Sleep(800);
 
     printf("\n\n    Tu nuevo nivel: %d\n", personaje->nivel);
     printf("    Tu nueva experiencia: %d\n", personaje->exp);

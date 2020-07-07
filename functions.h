@@ -9,70 +9,85 @@
 #include <time.h>
 #include <string.h>
 
-//hace una copia del char
+//Realiza una copia del char pasado por parametro.
 char * _strdup (const char *s);
 
-//lee un campo de un archivo csv
+//Lee un campo de un archivo csv.
 const char *get_csv_field (char * tmp, int i);
 
-//recibe un puntero a char, muestra el texto letra por letra con cierta lentitud, utilizando la funcion sleep
+//Recibe un puntero a char, muestra el texto letra por letra con cierta lentitud, utilizando la funcion sleep.
 void mostrarLetraPorLetra(char *);
 
+/*Esta función se encarga de mostrar el texto pasado por parametro, incluyendo algunos saltos de linea,
+esto es para mostrar correctamente el texto en la función de pelea. */
 void mostrarAccionPelea(char *);
 
-//crea un personaje nuevo y lo retorna
+//Crea un personaje nuevo, inicializando los miembros del personaje y lo retorna.
 Personaje * crearPersonaje(char[]);
 
-//esta funcion que carga las armas del archivo armas.csv en una tabla hash
+//Esta funcion que carga las armas del archivo armas.csv en una tabla hash.
 void cargarArmas(HashTable *);
 
-//funcion que carga las armaduras del archivo armaduras.csv en una tabla hash
+//Funcion que carga las armaduras del archivo armaduras.csv en una tabla hash.
 void cargarArmaduras(HashTable *);
 
-//funcion que carga las pociones del archivo pociones.csv en una tabla hash
+//Funcion que carga las pociones del archivo pociones.csv en una tabla hash.
 void cargarPociones(HashTable *);
 
-//función que aumenta los puntos de nivel, actualiza tu vida maxima y
+//Función que aumenta los puntos de nivel, actualiza la vida maxima del personaje y muestra por pantalla los nuevos stats.
 void subirNivel(Personaje *);
 
-//equipa un arma, por lo que suma los stats del arma al personaje, además comprueba los requisitos para equipar
+//Equipa un arma, suma los stats del arma al personaje, comprueba que el arma pueda ser equipada y que si había un arma equipada anteriormente.
 void equiparArma(Item *, Personaje *);
 
-//desequipa un arma, por lo tanto resta los stats del arma al personaje
+//Desequipa un arma, por lo tanto resta los stats del arma al personaje.
 void desequiparArma(Item *, Personaje *);
 
-//equipa una armadura y suma los stats al personajes, además comprueba los requisitos para equipar
+//Equipa una armadura y suma los stats al personajes, además comprueba los requisitos para equipar y si es que había una armadura equipada anteriormente.
 void equiparArmadura(Item *, Personaje *);
 
-//desequipa una armadura y resta los stats al personaje
+//Desequipa una armadura, por lo tanto, resta los stats de la armadura al personaje.
 void desequiparArmadura(Item *, Personaje *);
 
-/* muestra las caracteristicas del item seleccionado, el segundo parametro, si recibe 1 muestra el objeto con una flecha (se abrió
- dentro del inventario, si es 2, se muestra sin la flecha (se abrió desde la tienda))
- */
+/*Muestra las caracteristicas del item seleccionado, el segundo parametro, si recibe 1 muestra el objeto con una flecha (se abrió
+ dentro del inventario, si es 2, se muestra sin la flecha (se abrió desde la tienda)) esto con el fin de no crear una función exclusiva para la tienda.*/
 void mostrarObjeto(Item *, int);
 
-//muestra las opciones de un objeto (equipar, utilizar, entre otras)
+//Muestra las opciones de un objeto cuando se ve el inventario (equipar, utilizar, botar, etc).
 void verOpcionesDelObjeto(Item *, int, Personaje *);
 
-//función que abre el inventario
+/*Función que abre el inventario, utiliza otras funciones como mostrarObjeto, para cumplir con su función correctamente.
+ Muestra todo el inventario, si hay objetos vaciós muestra que está vacío, permite interactuar con las flechas y seleccionar objetos.*/
 void abrirInventario(Personaje *);
 
+/*Permite ver las estadísticas de un jugador (fuerza, agilidad, etc), incluyendo información del uso de cada una.
+Además, permite interactuar con el teclado e ir moviendose, en caso de haber puntos de habilidad, se pueden aumentar en tiempo real las estadísticas.*/
 void abrirEstadisticas(Personaje *);
 
+/*muestra las opciones del objeto para la tienda (comprar y volver atrás), si el objeto es comprado, resta el oro y cambia
+el booleano "compraado" del item a verdadero, así la función abrir tienda sabe si mostrar el nombre del objeto, o un texto que dice "comprado".*/
 void mostrarOpcionesObjetoTienda(Item *, Personaje *);
 
+/*Esta función lo que hace es abrir la tienda, cargar un archivo con objetos, mostrar los 12 objetos de la tienda, y usa la función
+mostrarOpcionesObjetoTienda para mostrar las opciones y poder realizar compras, permite interactuar con los objetos
+y además puedes moverte a tu inventario que se muestra más abajo presionando la letra i.*/
 void abrirTienda(Personaje *, char *, HashTable *, HashTable *, HashTable *);
 
-/* crea un item, proporcionado por la tabla hash (púede ser arma, armadura o pocion)
-   si es que el tercer parametro es 1, se busca crear un arma, si el parmametro es 2 una amardura, si es 3 una pocion */
+/*Crea un item, proporcionado por la tabla hash (púede ser arma, armadura o pocion) que recibe por parametro, recibe el nombre del item
+(para buscarlo en su respectiva tabla), y por último un número.
+ Si es que el tercer parametro es 1, se busca crear un arma, si es 2 una amardura, si es 3 una pocion */
 Item * crearItem(HashTable *, char *, int);
 
-//crea una nueva partida
+/*Funcion principal 1, se encarga de crear una nueva partida, mostrando la historia de manera lineal haciendo uso de
+ las funciones definidas anteriormente. Recibe como parametro las 4 tablas hash correspondientes. */
 void nuevaPartida(HashTable *, HashTable *, HashTable *, HashTable *);
 
+/*Se encarga de mostrar la historia del archivo csv que creamos, el algoritmo muestra las lineas pasadas por parametro, por ejemplo,
+si paso el 2 y el 6, mostrará desde la linea 2 a la 6 de manera lenta (como el texto de pokemon), si se apreta el espacio, se salta la "animación"*/
 void mostrarHistoria (int, int);
 
+/*Muestra el texto de las lineas pasadas por parametro, pero a diferencia de la función mostrarHistoria, esta lo hace sin ningún tipo de
+"animación", solamente muestra el texto por pantalla.*/
 void mostrarHistoriaSinPausas (int, int);
 
 
