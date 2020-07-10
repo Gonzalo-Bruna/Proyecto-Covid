@@ -50,8 +50,8 @@ int main(){
 
             switch(opcion){
 
-              case 1: nuevaPartida(armas, armaduras, pociones, enemigos);
-
+                case 1: nuevaPartida(armas, armaduras, pociones, enemigos);
+                case 2: cargarPartida(armas, armaduras, pociones, enemigos);
             }
 
 

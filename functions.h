@@ -64,6 +64,7 @@ Item * crearItem(HashTable *, char *, int);
 void subirNivel(Personaje *);
 
 //Equipa un arma, suma los stats del arma al personaje, comprueba que el arma pueda ser equipada y que si había un arma equipada anteriormente.
+
 void equiparArma(Item *, Personaje *);
 
 //Desequipa un arma, por lo tanto resta los stats del arma al personaje.
@@ -108,5 +109,7 @@ int pelear(Personaje *, Enemigo *);
 /*Funcion principal 1, se encarga de crear una nueva partida, mostrando la historia de manera lineal haciendo uso de
  las funciones definidas anteriormente. Recibe como parametro las 4 tablas hash correspondientes. */
 void nuevaPartida(HashTable *, HashTable *, HashTable *, HashTable *);
+
+void cargarPartida(HashTable *, HashTable *, HashTable *, HashTable *);
 
 #endif // functions_h
