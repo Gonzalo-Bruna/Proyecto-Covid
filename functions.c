@@ -3241,7 +3241,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
                 personaje->vidaActual /= 2;
 
-                mostrarHistoria(180,183);
+                mostrarHistoria(181,183);
                 Enemigo * centauro2 = searchHashTable(enemigos, "Centauro Menor");
 
                 if(pelear (personaje, centauro2) == 0){
@@ -3664,13 +3664,21 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
     //pelea final
 
+    mostrarHistoria(214,223);
 
+    Enemigo * profeNachoUwU = searchHashTable(enemigos, "Ignacio Araya");
 
-    save = fopen("save.csv", "w");
-    fprintf(save,"%d", 7);
-    fclose(save);
+    if(pelear(personaje, profeNachoUwU) == 0){
 
-    guardarPersonaje(personaje);
+        mostrarHistoria(162,164);
+        printf("\n\n");
+        system("pause");
+        save = fopen("save.csv", "w");
+        fprintf(save,"%d",0);
+        fclose(save);
+        return;
+
+    }
 
     save = fopen("save.csv", "w");
     fprintf(save,"%d",0);
@@ -4554,7 +4562,7 @@ void cargarPartida(HashTable * armas, HashTable * armaduras, HashTable * pocione
 
                     personaje->vidaActual /= 2;
 
-                    mostrarHistoria(180,183);
+                    mostrarHistoria(181,183);
                     Enemigo * centauro2 = searchHashTable(enemigos, "Centauro Menor");
 
                     if(pelear (personaje, centauro2) == 0){
@@ -4984,6 +4992,24 @@ void cargarPartida(HashTable * armas, HashTable * armaduras, HashTable * pocione
             }while(1);
 
         }
+
+        mostrarHistoria(214,223);
+
+        Enemigo * profeNachoUwU = searchHashTable(enemigos, "Ignacio Araya");
+
+        if(pelear(personaje, profeNachoUwU) == 0){
+
+            mostrarHistoria(228,229);
+            printf("\n\n");
+            system("pause");
+            save = fopen("save.csv", "w");
+            fprintf(save,"%d",0);
+            fclose(save);
+            return;
+
+        }
+
+        mostrarHistoria(228,229);
 
     }
 
