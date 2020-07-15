@@ -622,15 +622,15 @@ void mostrarObjeto(Item * item, int n){
         }
         if(item->arma->ataqueCriticoCuerpo != 0){
 
-            if(item->arma->ataqueCriticoCuerpo > 0) printf("        Ataque Critico a Cuerpo: %.1f\n", item->arma->ataqueCriticoCuerpo);
+            if(item->arma->ataqueCriticoCuerpo > 0) printf("        Ataque Critico a Cuerpo: +%.1f\n", item->arma->ataqueCriticoCuerpo);
             else printf("        Ataque Critico a Cuerpo: %.1f\n", item->arma->ataqueCriticoCuerpo);
 
         }
 
         if(item->arma->ataqueMagico != 0){
 
-            if(item->arma->ataqueMagico > 0)  printf("        Ataque Magico: %.1f\n", item->arma->ataqueMagico);
-            else printf("        Ataque Magico: %.1f\n", item->arma->ataqueMagico);
+            if(item->arma->ataqueMagico > 0)  printf("        Ataque Magico: +%.1f\n", item->arma->ataqueMagico);
+            else printf("        Ataque Magico: %.1f\n", item->arma->ataqueMagico); //es pal futuro uwu
 
         }
 
@@ -699,7 +699,7 @@ void mostrarObjeto(Item * item, int n){
         printf("->  %s\n", item->pocion->nombre);
         printf("        Stats: \n");
 
-        printf("        Puntos de vida: +%.1f", item->pocion->puntosDeVida);
+        printf("        Puntos de vida: +%.1f\n", item->pocion->puntosDeVida);
 
     }
 
@@ -754,7 +754,7 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje){
             if(item->arma->ataqueCriticoDistancia != 0){
 
                 if(item->arma->ataqueCriticoDistancia > 0) printf("        Ataque Critico a Distancia: +%.1f%\n", item->arma->ataqueCriticoDistancia);
-                else printf("        Ataque Critico a Distancia: : %.1f%\n", item->arma->ataqueCriticoDistancia);
+                else printf("        Ataque Critico a Distancia: %.1f%\n", item->arma->ataqueCriticoDistancia);
 
             }
             if(item->arma->ataqueCriticoCuerpo != 0){
@@ -890,8 +890,8 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje){
             }
 
         }
-        if(opcion == 2) printf("->  Botar\n");
-        else printf("     Botar\n");
+        if(opcion == 2) printf("->  Tirar\n");
+        else printf("     Tirar\n");
         if(opcion == 3) printf("->  Volver atras\n");
         else printf("     Volver atras\n");
 
@@ -927,12 +927,16 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje){
 
                 personaje->vidaActual = personaje->vidaMaxima;
                 printf("                          Te has curado por completo");
+                free(personaje->inventario[pos]);
+                personaje->inventario[pos] = NULL;
 
             }
             else{
 
                 personaje->vidaActual = personaje->vidaActual + item->pocion->puntosDeVida;
                 printf("                          Te has curado %.1f puntos de vida", item->pocion->puntosDeVida);
+                free(personaje->inventario[pos]);
+                personaje->inventario[pos] = NULL;
 
             }
 
@@ -1050,6 +1054,7 @@ void verOpcionesDelObjeto(Item * item, int pos, Personaje * personaje){
 
         }
 
+        free(personaje->inventario[pos]);
         personaje->inventario[pos] = NULL;
 
     }
@@ -1219,13 +1224,15 @@ void abrirInventario(Personaje * personaje){
         }
 
         printf("\n\nPresione enter para ver las opciones del objeto.\n");
-        printf("Presione i para cerrar el inventario.");
+        printf("Presione i o esc para cerrar el inventario.");
 
         do{
 
             key = getch();
 
-        }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73);
+        }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 27);
+
+        if(key == 27) return;
 
         switch(key){
             case 72: if(opcion == 1) opcion = 6;
@@ -1300,14 +1307,14 @@ void abrirEstadisticas(Personaje * personaje){
         printf("\n    La Vitalidad aumenta tu vida maxima.");
         printf("\n    La probabilidad de golpe critico es mayor para el ataque fisico");
         printf("\n    El ataque magico no tiene probabilidad de acertar un golpe critico.\n");
-        printf("\nPresione e para cerrar las estadisticas");
+        printf("\nPresione e o esc para cerrar las estadisticas");
         printf("\nPresione enter para aumentar sus estadisticas");
 
         do{
            key  = getch();
-        }while(key != 72 && key != 80 && key != 13 && key != 101 && key != 69);
+        }while(key != 72 && key != 80 && key != 13 && key != 101 && key != 69 && key != 27);
 
-        if(key == 101 || key == 69) break;
+        if(key == 101 || key == 69 || 27) return;
 
         switch(key){
             case 72: if(opcion == 1) opcion = 4;
@@ -1487,7 +1494,7 @@ void mostrarOpcionesObjetoTienda(Item * item, Personaje * personaje){
 
                 if(personaje->inventario[i] == NULL){
 
-                    item->comprado = true;
+                    if(strcmp(item->tipo, "Pocion") != 0) item->comprado = true;
                     personaje->inventario[i] = item;
                     break;
 
@@ -1544,6 +1551,8 @@ void abrirTienda(Personaje * personaje, char * nombreArchivo, HashTable * armas,
         else if(strcmp(tipo, "Armadura") == 0) nuevo = crearItem(armaduras, nombre, 2);
         else nuevo = crearItem(pociones, nombre, 3);
 
+        if(nuevo == NULL) return;
+
         nuevo->precio = precio;
         inventarioTienda[cantidadObjetos] = nuevo;
         cantidadObjetos++;
@@ -1587,7 +1596,7 @@ void abrirTienda(Personaje * personaje, char * nombreArchivo, HashTable * armas,
         if(opcion == 3){
 
             if(!inventarioTienda[2]->comprado) printf(" ->  %-25s\n", inventarioTienda[2]->nombre);
-            else printf(" ->  Comprado                 \n", inventarioTienda[2]->nombre);
+            else printf(" ->  Comprado                 \n");
 
         }
         else{
@@ -1631,7 +1640,7 @@ void abrirTienda(Personaje * personaje, char * nombreArchivo, HashTable * armas,
         if(opcion == 6){
 
             if(!inventarioTienda[5]->comprado) printf(" ->  %-25s\n", inventarioTienda[5]->nombre);
-            else printf(" ->  Comprado                 \n", inventarioTienda[5]->nombre);
+            else printf(" ->  Comprado                 \n");
 
         }
         else{
@@ -1674,7 +1683,7 @@ void abrirTienda(Personaje * personaje, char * nombreArchivo, HashTable * armas,
         if(opcion == 9){
 
             if(!inventarioTienda[8]->comprado) printf(" ->  %-25s\n", inventarioTienda[8]->nombre);
-            else printf(" ->  Comprado                 \n", inventarioTienda[8]->nombre);
+            else printf(" ->  Comprado                 \n");
 
         }
         else{
@@ -1717,7 +1726,7 @@ void abrirTienda(Personaje * personaje, char * nombreArchivo, HashTable * armas,
         if(opcion == 12){
 
             if(!inventarioTienda[11]->comprado) printf(" ->  %-25s\n", inventarioTienda[11]->nombre);
-            else printf(" ->  Comprado                 \n", inventarioTienda[11]->nombre);
+            else printf(" ->  Comprado                 \n");
 
         }
         else{
@@ -1823,7 +1832,9 @@ void abrirTienda(Personaje * personaje, char * nombreArchivo, HashTable * armas,
 
         do{
             key = getch();
-        }while(key != 13 && key != 72 && key != 80 && key != 77 && key != 75 && key != 73 && key != 105); //derecha 77 izquierda 75
+        }while(key != 13 && key != 72 && key != 80 && key != 77 && key != 75 && key != 73 && key != 105 && key != 27); //derecha 77 izquierda 75
+
+        if(key == 27) return;
 
         if(key == 13){
 
@@ -1928,7 +1939,6 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
 
     char key;
     int opcion = 1;
-    int turno;
     int numero;
     int danoExtra;
     char texto[100];
@@ -2025,7 +2035,7 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
                 }
                 else{
 
-                    strcpy(texto, "Tu ataque magico es insuficiente para herir al enemigo");
+                    strcpy(texto, "Tu ataque fisico es insuficiente para herir al enemigo");
 
                 }
 
@@ -2104,7 +2114,7 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
                 }
                 else{
 
-                    strcpy(texto, "Tu ataque magico es insuficiente para herir al enemigo");
+                    strcpy(texto, "Tu ataque a distancia es insuficiente para herir al enemigo");
 
                 }
 
@@ -2209,8 +2219,6 @@ int pelear(Personaje * personaje, Enemigo * enemigo){
                 danoExtra = 1;
 
                 numero = rand() % 1001;
-                printf("critico owo: %d\n\n", numero);
-                Sleep(3000);
 
                 if(numero <= (enemigo->ataqueCritico * 10) ){
 
@@ -2262,13 +2270,15 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
     Personaje * personaje = crearPersonaje(nombreJugador);
     clrscr();
 
-    char texto[50] = "Aqui comienza tu aventura ";
+    char texto[40] = "Aqui comienza tu aventura ";
     strcat(texto, nombreJugador);
     strcat(texto, "!");
 
+    mostrarLetraPorLetra(texto);
+
     Sleep(1100);
 
-    //mostrarHistoria(2,6);
+    mostrarHistoria(2,6);
 
     char key;
     int opcion = 1;
@@ -2277,7 +2287,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
         clrscr();
 
-        //mostrarHistoriaSinPausas(2,6);
+        mostrarHistoriaSinPausas(2,6);
         printf("\n");
 
         if(opcion == 1) printf("-> Pelear contra el monstruo\n");
@@ -2326,6 +2336,8 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
             fprintf(save,"%d", 0);
             fclose(save);
 
+            free(personaje);
+
             return;
 
         }
@@ -2344,14 +2356,14 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
         printf("Escoge una de las reliquias: \n\n");
 
-        if(opcion == 1) printf("-> Espada de Honos\n");
-        else printf("    Espada de Honos\n");
-        if(opcion == 2) printf("-> Daga de Tenma\n");
-        else printf("    Daga de Tenma\n");
-        if(opcion == 3) printf("-> Arco de Attar\n");
+        if(opcion == 1) printf("-> Espada de Bronce\n");
+        else printf("    Espada de Bronce\n");
+        if(opcion == 2) printf("-> Daga de Bronce\n");
+        else printf("    Daga de Bronce\n");
+        if(opcion == 3) printf("-> Arco Corto\n");
         else printf("    Arco de Attar\n");
-        if(opcion == 4) printf("-> Vaculo de Hecate\n");
-        else printf("    Vaculo de Hecate\n");
+        if(opcion == 4) printf("-> Baculo\n");
+        else printf("    Baculo\n");
 
         do{
            key  = getch();
@@ -2373,25 +2385,25 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
 
     if(opcion == 1){
 
-        Item * espadaDeHonos = crearItem(armas, "Espada de Honos", 1);
-        personaje->inventario[0] = espadaDeHonos;
+        Item * espada = crearItem(armas, "Espada de Bronce", 1);
+        personaje->inventario[0] = espada;
 
     }
     else if(opcion == 2){
 
-        Item * dagaDeTenma = crearItem(armas,"Daga de Tenma", 1);
-        personaje->inventario[0] = dagaDeTenma;
+        Item * daga = crearItem(armas,"Daga de Bronce", 1);
+        personaje->inventario[0] = daga;
 
     }
     else if(opcion == 3){
 
-        Item * arcoDeAttar = crearItem(armas,"Arco de Attar", 1);
-        personaje->inventario[0] = arcoDeAttar;
+        Item * arco = crearItem(armas,"Arco Corto", 1);
+        personaje->inventario[0] = arco;
 
     }
     else{
-        Item * baculoDeHecate = crearItem(armas,"Baculo de Hecate", 1);
-        personaje->inventario[0] = baculoDeHecate;
+        Item * baculo = crearItem(armas,"Baculo", 1);
+        personaje->inventario[0] = baculo;
 
     }
 
@@ -2457,6 +2469,8 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
             save = fopen("save.csv", "w");
             fprintf(save,"%d", 0);
             fclose(save);
+
+            free(personaje);
 
             mostrarHistoria(8,10);
             return;
@@ -2591,7 +2605,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
                 }
                 else{
 
-                    mostrarHistoria(46,47);
+                    mostrarHistoria(47,48);
 
                 }
 
@@ -2617,7 +2631,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
         clrscr();
 
         mostrarHistoriaSinPausas(50,56);
-        printf("\n\n");
+        printf("\n");
 
         if(opcion == 1) printf("-> Ir por el camino de la izquierda\n");
         else printf("    Ir por el camino de la izquierda\n");
@@ -2631,6 +2645,8 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
         do{
            key  = getch();
         }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+        if(key == 13) break;
 
         switch(key){
             case 72: if(opcion == 1) opcion = 3;
@@ -2656,9 +2672,972 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
     fclose(save);
 
     guardarPersonaje(personaje);
+    int ruta;
 
-    printf("\nlo que viene uwu");
+    if(opcion == 1){
+
+        ruta = opcion;
+
+        mostrarHistoria(58,64);
+
+        opcion = 1;
+
+        do{
+
+            clrscr();
+
+            mostrarHistoriaSinPausas(58,64);
+            printf("\n");
+
+            if(opcion == 1) printf("-> Pelar contra el bandido\n");
+            else printf("    Pelear contra el bandido\n");
+            if(opcion == 2) printf("-> Pasar por la puerta a tu izquierda\n\n");
+            else printf("    Pasar por la puerta a tu izquierda\n\n");
+            printf("Presione i para abrir el inventario\n");
+            printf("Presione e para abrir sus estadisticas");
+
+            do{
+               key  = getch();
+            }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+            if(key == 13) break;
+
+            switch(key){
+                case 72: if(opcion == 1) opcion = 2;
+                        else opcion--;
+                    break;
+                case 80: if(opcion == 2) opcion = 1;
+                        else opcion++;
+                    break;
+                case 105: abrirInventario(personaje);
+                    break;
+                case 73: abrirInventario(personaje);
+                    break;
+                case 101: abrirEstadisticas(personaje);
+                    break;
+                case 69:  abrirEstadisticas(personaje);
+                    break;
+            }
+
+        }while(1);
+
+        save = fopen("save.csv", "w");
+        fprintf(save,"%d", 6);
+        fclose(save);
+
+        guardarPersonaje(personaje);
+
+        if(opcion == 1){
+
+            Enemigo * bandido = searchHashTable(enemigos, "Bandido");
+            pelear(personaje, bandido);
+            mostrarHistoria(66,70);
+            personaje->oro += 500;
+            printf("\n\n");
+            system("pause");
+
+        }
+
+        mostrarHistoria(72,75);
+
+        opcion = 1;
+
+        do{
+
+            clrscr();
+
+            mostrarHistoriaSinPausas(72,75);
+            printf("\n");
+
+            if(opcion == 1) printf("-> Pelear contra el bandido\n");
+            else printf("    Pelear contra el bandido\n");
+            if(opcion == 2) printf("-> Pasar por la puerta a tu izquierda\n");
+            else printf("    Pasar por la puerta a tu izquierda\n");
+            if(opcion == 3) printf("-> Pasar por la puerta a tu derecha\n\n");
+            else printf("    Pasar por la puerta a tu derecha\n\n");
+
+            printf("Presione i para abrir el inventario\n");
+            printf("Presione e para abrir sus estadisticas");
+
+            do{
+               key  = getch();
+            }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+            if(key == 13) break;
+
+            switch(key){
+                case 72: if(opcion == 1) opcion = 3;
+                        else opcion--;
+                    break;
+                case 80: if(opcion == 3) opcion = 1;
+                        else opcion++;
+                    break;
+                case 105: abrirInventario(personaje);
+                    break;
+                case 73: abrirInventario(personaje);
+                    break;
+                case 101: abrirEstadisticas(personaje);
+                    break;
+                case 69:  abrirEstadisticas(personaje);
+                    break;
+            }
+
+        }while(1);
+
+        save = fopen("save.csv", "w");
+        fprintf(save,"%d", 7);
+        fclose(save);
+
+        guardarPersonaje(personaje);
+
+        if(opcion == 1){
+
+            Enemigo * bandido2 = searchHashTable(enemigos, "Bandido2");
+            pelear(personaje, bandido2);
+            mostrarHistoria(77,78);
+            personaje->oro += 500;
+            printf("\n\n");
+            system("pause");
+
+            opcion = 1;
+
+            do{
+
+                clrscr();
+
+                mostrarHistoriaSinPausas(72,75);
+                printf("\n");
+
+                if(opcion == 1) printf("-> Pasar por la puerta a tu izquierda\n");
+                else printf("    Pasar por la puerta a tu izquierda\n");
+                if(opcion == 2) printf("-> Pasar por la puerta a tu derecha\n\n");
+                else printf("    Pasar por la puerta a tu derecha\n\n");
+
+                printf("Presione i para abrir el inventario\n");
+                printf("Presione e para abrir sus estadisticas");
+
+                do{
+                   key  = getch();
+                }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+                if(key == 13) break;
+
+                switch(key){
+                    case 72: if(opcion == 1) opcion = 2;
+                            else opcion--;
+                        break;
+                    case 80: if(opcion == 2) opcion = 1;
+                            else opcion++;
+                        break;
+                    case 105: abrirInventario(personaje);
+                        break;
+                    case 73: abrirInventario(personaje);
+                        break;
+                    case 101: abrirEstadisticas(personaje);
+                        break;
+                    case 69:  abrirEstadisticas(personaje);
+                        break;
+                }
+
+            }while(1);
+
+               save = fopen("save.csv", "w");
+            fprintf(save,"%d", 8);
+            fclose(save);
+
+            guardarPersonaje(personaje);
+
+            if(opcion == 1) opcion = 2;
+            else if(opcion == 2) opcion = 3;
+
+        }
+
+        if(opcion == 2){ //Camino a la izquierda
+
+            mostrarHistoria(86,89);
+            opcion = 1;
+
+            do{
+
+                clrscr();
+
+                mostrarHistoriaSinPausas(86,89);
+                printf("\n");
+
+                if(opcion == 1) printf("-> Pelear contra el bandido\n");
+                else printf("    Pelear contra el bandido\n");
+                if(opcion == 2) printf("-> Hablar con el bandido\n\n");
+                else printf("    Hablar con el bandido\n\n");
+
+                printf("Presione i para abrir el inventario\n");
+                printf("Presione e para abrir sus estadisticas");
+
+                do{
+                    key  = getch();
+                }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+                if(key == 13) break;
+
+                switch(key){
+                    case 72: if(opcion == 1) opcion = 2;
+                            else opcion--;
+                        break;
+                    case 80: if(opcion == 2) opcion = 1;
+                            else opcion++;
+                        break;
+                    case 105: abrirInventario(personaje);
+                        break;
+                    case 73: abrirInventario(personaje);
+                        break;
+                    case 101: abrirEstadisticas(personaje);
+                        break;
+                    case 69:  abrirEstadisticas(personaje);
+                        break;
+                }
+
+            }while(1);
+
+            save = fopen("save.csv", "w");
+            fprintf(save,"%d", 9);
+            fclose(save);
+
+            guardarPersonaje(personaje);
+
+            if(opcion == 1){ //pelear contra el bandido
+
+                Enemigo * bandido3 = searchHashTable(enemigos, "Bandido3");
+                pelear(personaje, bandido3);
+
+                mostrarHistoria(91,92);
+
+                opcion = 1;
+
+                do{
+
+                    clrscr();
+
+                    mostrarHistoriaSinPausas(91,92);
+                    printf("\n");
+
+                    if(opcion == 1) printf("-> Tomar su arma\n");
+                    else printf("    Tomar su arma\n");
+                    if(opcion == 2) printf("-> Tomar su oro\n\n");
+                    else printf("    Tomar su oro\n\n");
+
+                    printf("Presione i para abrir el inventario\n");
+                    printf("Presione e para abrir sus estadisticas");
+
+                    do{
+                        key  = getch();
+                    }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+                    if(key == 13) break;
+
+                    switch(key){
+                        case 72: if(opcion == 1) opcion = 2;
+                                else opcion--;
+                            break;
+                        case 80: if(opcion == 2) opcion = 1;
+                                else opcion++;
+                            break;
+                        case 105: abrirInventario(personaje);
+                            break;
+                        case 73: abrirInventario(personaje);
+                            break;
+                        case 101: abrirEstadisticas(personaje);
+                            break;
+                        case 69:  abrirEstadisticas(personaje);
+                            break;
+                    }
+
+                }while(1);
+
+                save = fopen("save.csv", "w");
+                fprintf(save,"%d", 10);
+                fclose(save);
+
+                guardarPersonaje(personaje);
+
+                if(opcion == 1){ //Recoges su arma
+
+                    mostrarHistoria(94,94);
+                    Item * nuevo = crearItem(armas, "Espada Oxidada", 1);
+                    int i;
+                    for (i = 0 ; i < 6 ; i++){
+
+                        if(personaje->inventario[i] == NULL){
+
+                            personaje->inventario[i] = nuevo;
+                            break;
+                        }
+
+                    }
+                }
+                else{ //Recoges su oro
+
+                    mostrarHistoria(96,96);
+                    personaje->oro += 250;
+
+                }
+
+                printf("\n\n");
+                system("pause");
+
+
+            }
+            else{ //Hablar con el bandido
+
+                mostrarHistoria(98,102);
+
+                opcion = 1;
+
+                do{
+
+                    clrscr();
+
+                    mostrarHistoriaSinPausas(98,102);
+                    printf("\n");
+
+                    if(opcion == 1) printf("-> Escoger la informacion\n");
+                    else printf("    Escoger la informacion\n");
+                    if(opcion == 2) printf("-> Escoger el equipamiento\n\n");
+                    else printf("    Escoger el equipamiento\n\n");
+
+                    printf("Presione i para abrir el inventario\n");
+                    printf("Presione e para abrir sus estadisticas");
+
+                    do{
+                        key  = getch();
+                    }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+                    if(key == 13) break;
+
+                    switch(key){
+                        case 72: if(opcion == 1) opcion = 2;
+                                else opcion--;
+                            break;
+                        case 80: if(opcion == 2) opcion = 1;
+                                else opcion++;
+                            break;
+                        case 105: abrirInventario(personaje);
+                            break;
+                        case 73: abrirInventario(personaje);
+                            break;
+                        case 101: abrirEstadisticas(personaje);
+                            break;
+                        case 69:  abrirEstadisticas(personaje);
+                            break;
+                    }
+
+                }while(1);
+
+                save = fopen("save.csv", "w");
+                fprintf(save,"%d", 11);
+                fclose(save);
+
+                guardarPersonaje(personaje);
+
+                if(opcion == 1){ //se escoge la informacion
+
+                    mostrarHistoria(104,109);
+
+                }
+                else{ // se escoge el equipamiento
+
+                    mostrarHistoria(111,111);
+                    Item * nuevo = crearItem(armas,"Espada Oxidada", 1);
+                    int i;
+
+                    for (i = 0 ; i < 6 ; i++){
+
+                        if(personaje->inventario[i] == NULL){
+
+                            personaje->inventario[i] = nuevo;
+                            break;
+
+                        }
+
+                    }
+
+                    personaje->oro += 250;
+
+                }
+
+
+            }
+
+
+        }
+        else if (opcion == 3){ //Camino a la derecha
+
+            mostrarHistoria(80,84);
+            Item * nuevo = crearItem(pociones, "Pocion Mediana", 3);
+            int i;
+            for (i = 0 ; i < 6 ; i++){
+
+                if(personaje->inventario[i] == NULL){
+
+                    personaje->inventario[i] = nuevo;
+                    break;
+
+                }
+
+            }
+            printf("\n\n");
+            system("pause");
+
+        }
+
+        mostrarHistoria(113, 116);
+
+    } // OPCION 1 CAMINO  A LA IZQUIERDA
+    else if(opcion == 2){
+
+        ruta = opcion;
+
+        mostrarHistoria(166, 172);
+        Item * nuevo = crearItem(pociones, "Pocion Mediana", 3);
+
+        int i;
+        for (i = 0 ; i < 6 ; i++){
+
+            if(personaje->inventario[i] == NULL){
+
+                personaje->inventario[i] = nuevo;
+                break;
+
+            }
+
+        }
+
+        Enemigo * centauro = searchHashTable(enemigos, "Centauro");
+
+        if(pelear(personaje, centauro) == 0){
+
+            mostrarHistoria(162,164);
+            printf("\n\n");
+            system("pause");
+            return;
+
+        }
+
+        personaje->exp = personaje->expMaxima;
+        subirNivel(personaje);
+
+        mostrarHistoria(174,178);
+
+        opcion = 1;
+
+        do{
+
+            clrscr();
+
+            mostrarHistoriaSinPausas(174,178);
+            printf("\n");
+
+            if(opcion == 1) printf("-> Pasar por la puerta a la izquierda\n");
+            else printf("    Pasar por la puerta a la izquierda\n");
+            if(opcion == 2) printf("-> Pelear contra el enemigo\n");
+            else printf("    Pelear contra el enemigo\n");
+            if(opcion == 3) printf("-> Pasar por la puerta a la derecha\n\n");
+            else printf("    Pasar por la puerta a la derecha\n\n");
+
+            printf("Presione i para abrir el inventario\n");
+            printf("Presione e para abrir sus estadisticas");
+
+            do{
+                key  = getch();
+            }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+            if(key == 13) break;
+
+            switch(key){
+                case 72: if(opcion == 1) opcion = 3;
+                        else opcion--;
+                    break;
+                case 80: if(opcion == 3) opcion = 1;
+                        else opcion++;
+                    break;
+                case 105: abrirInventario(personaje);
+                    break;
+                case 73: abrirInventario(personaje);
+                    break;
+                case 101: abrirEstadisticas(personaje);
+                    break;
+                case 69:  abrirEstadisticas(personaje);
+                    break;
+            }
+
+        }while(1);
+
+        if(opcion == 1){ //puerta de la izquierda
+
+            mostrarHistoria(180,183);
+            Enemigo * centauro2 = searchHashTable(enemigos, "Centauro Menor");
+
+            if(pelear (personaje, centauro2) == 0){
+
+                mostrarHistoria(162,164);
+                printf("\n\n");
+                system("pause");
+                return;
+
+            }
+
+            mostrarHistoria(185,189);
+            personaje->oro += 625;
+
+        }
+        else if(opcion == 2){
+
+            Enemigo * ladron = searchHashTable(enemigos, "Ladron");
+            if(pelear(personaje, ladron) == 0){
+
+                mostrarHistoria(162,164);
+                printf("\n\n");
+                system("pause");
+                return;
+
+            }
+
+            personaje->oro += 250;
+            personaje->exp += ( personaje->expMaxima / 2 );
+            mostrarHistoria(196, 198);
+            system("pause");
+
+            opcion = 1;
+
+            do{
+
+                clrscr();
+
+                mostrarHistoriaSinPausas(174,178);
+                printf("\n");
+
+                if(opcion == 1) printf("-> Pasar por la puerta a la izquierda\n");
+                else printf("    Pasar por la puerta a la izquierda\n");
+                if(opcion == 2) printf("-> Pasar por la puerta a la derecha\n\n");
+                else printf("    Pasar por la puerta a la derecha\n\n");
+
+                printf("Presione i para abrir el inventario\n");
+                printf("Presione e para abrir sus estadisticas");
+
+                do{
+                    key  = getch();
+                }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+                if(key == 13) break;
+
+                switch(key){
+                    case 72: if(opcion == 1) opcion = 2;
+                            else opcion--;
+                        break;
+                    case 80: if(opcion == 2) opcion = 1;
+                            else opcion++;
+                        break;
+                    case 105: abrirInventario(personaje);
+                        break;
+                    case 73: abrirInventario(personaje);
+                        break;
+                    case 101: abrirEstadisticas(personaje);
+                        break;
+                    case 69:  abrirEstadisticas(personaje);
+                        break;
+                }
+
+            }while(1);
+
+            if(opcion == 1){
+
+                personaje->vidaActual /= 2;
+
+                mostrarHistoria(180,183);
+                Enemigo * centauro2 = searchHashTable(enemigos, "Centauro Menor");
+
+                if(pelear (personaje, centauro2) == 0){
+
+                    mostrarHistoria(162,164);
+                    printf("\n\n");
+                    system("pause");
+                    return;
+
+                }
+
+                mostrarHistoria(185,189);
+                personaje->oro += 625;
+
+            }
+            else{
+
+                mostrarHistoria(200,205);
+                personaje->oro += 250;
+                printf("\n\n");
+                system("pause");
+
+            }
+
+        }
+        else if (opcion == 3){
+
+            mostrarHistoria(192,194);
+            personaje->oro += 250;
+            printf("\n\n");
+            system("pause");
+
+            Enemigo * ladron = searchHashTable(enemigos, "Ladron");
+            if(pelear(personaje, ladron) == 0){
+
+                mostrarHistoria(162,164);
+                printf("\n\n");
+                system("pause");
+                return;
+
+            }
+
+            personaje->oro += 250;
+            personaje->exp += ( personaje->expMaxima / 2 );
+            mostrarHistoria(196, 198);
+            printf("\n\n");
+            system("pause");
+
+        }
+
+        mostrarHistoria(207, 211);
+        printf("\n\n");
+        system("pause");
+
+    } //OPCION 2 CAMINO DE AL MEDIO
+    else if(opcion == 3){
+
+        ruta = opcion;
+
+        mostrarHistoria(118,125);
+
+        int cont = 0;
+
+        int i;
+        for (i = 0; i < 6 ; i++){
+
+            if(personaje->inventario[i] == NULL){
+
+                cont++;
+                if(cont > 3) break;
+                else{
+
+                    Item * pocion = crearItem(pociones, "Pocion Menor", 3);
+                    personaje->inventario[i] = pocion;
+
+                }
+
+            }
+
+        }
+
+        Enemigo * centauro = searchHashTable(enemigos, "Centauro");
+
+        if (pelear (personaje, centauro) == 0){
+
+            mostrarHistoria(162,164);
+            printf("\n\n");
+            system("pause");
+            return;
+
+        }
+
+        mostrarHistoria(127, 131);
+
+        opcion = 1;
+
+        do{
+
+            clrscr();
+
+            mostrarHistoriaSinPausas(127,131);
+            printf("\n");
+
+            if(opcion == 1) printf("-> Pasar por la puerta a la izquierda\n");
+            else printf("    Pasar por la puerta a la izquierda\n");
+            if(opcion == 2) printf("-> Pelear contra el enemigo\n");
+            else printf("    Pelear contra el enemigo\n");
+            if(opcion == 3) printf("-> Pasar por la puerta a la derecha\n\n");
+            else printf("    Pasar por la puerta a la derecha\n\n");
+
+            printf("Presione i para abrir el inventario\n");
+            printf("Presione e para abrir sus estadisticas");
+
+            do{
+                key  = getch();
+            }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+            if(key == 13) break;
+
+            switch(key){
+                case 72: if(opcion == 1) opcion = 3;
+                        else opcion--;
+                    break;
+                case 80: if(opcion == 3) opcion = 1;
+                        else opcion++;
+                    break;
+                case 105: abrirInventario(personaje);
+                    break;
+                case 73: abrirInventario(personaje);
+                    break;
+                case 101: abrirEstadisticas(personaje);
+                    break;
+                case 69:  abrirEstadisticas(personaje);
+                    break;
+            }
+
+        }while(1);
+
+        if(opcion == 1){ //puerta izquierda
+
+            mostrarHistoria(133,136);
+            personaje->vidaActual /= 2;
+
+            Enemigo * centauro2 = searchHashTable(enemigos, "Centauro Menor");
+
+            if(pelear (personaje, centauro2) == 0){
+
+                mostrarHistoria(162,164);
+                printf("\n\n");
+                system("pause");
+                return;
+
+            }
+
+            personaje->exp = personaje->expMaxima;
+            subirNivel(personaje);
+
+            personaje->oro += 250;
+
+            mostrarHistoria(138,145);
+            printf("\n\n");
+            system("pause");
+
+
+        }
+        else if(opcion == 2){
+
+            Enemigo * centauro3 = searchHashTable(enemigos, "Centauro Mayor");
+            if(pelear(personaje, centauro3) == 0){
+
+                mostrarHistoria(162,164);
+                printf("\n\n");
+                system("pause");
+                return;
+
+            }
+
+            personaje->exp = personaje->expMaxima;
+            subirNivel(personaje);
+            personaje->exp = personaje->expMaxima;
+            subirNivel(personaje);
+
+            opcion = 1;
+
+            do{
+
+                clrscr();
+
+                mostrarHistoriaSinPausas(127,131);
+                printf("\n");
+
+                if(opcion == 1) printf("-> Pasar por la puerta a la izquierda\n");
+                else printf("    Pasar por la puerta a la izquierda\n");
+                if(opcion == 2) printf("-> Pasar por la puerta a la derecha\n\n");
+                else printf("    Pasar por la puerta a la derecha\n\n");
+
+                printf("Presione i para abrir el inventario\n");
+                printf("Presione e para abrir sus estadisticas");
+
+                do{
+                    key  = getch();
+                }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+                if(key == 13) break;
+
+                switch(key){
+                    case 72: if(opcion == 1) opcion = 2;
+                            else opcion--;
+                        break;
+                    case 80: if(opcion == 2) opcion = 1;
+                            else opcion++;
+                        break;
+                    case 105: abrirInventario(personaje);
+                        break;
+                    case 73: abrirInventario(personaje);
+                        break;
+                    case 101: abrirEstadisticas(personaje);
+                        break;
+                    case 69:  abrirEstadisticas(personaje);
+                        break;
+                }
+
+            }while(1);
+
+            if(opcion == 1){ //camino a la izquierda
+
+                mostrarHistoria(134,136);
+                personaje->vidaActual /= 2;
+
+                printf("\n\n");
+                system("pause");
+
+                Enemigo * centauro2 = searchHashTable(enemigos, "Centauro Menor");
+
+                if(pelear (personaje, centauro2) == 0){
+
+                    mostrarHistoria(162,164);
+                    printf("\n\n");
+                    system("pause");
+                    return;
+
+                }
+
+                personaje->exp = personaje->expMaxima;
+                subirNivel(personaje);
+                personaje->oro += 250;
+
+                mostrarHistoria(138,145);
+                printf("\n\n");
+                system("pause");
+
+            }
+            else{ //camino a la derecha
+
+                mostrarHistoria(154,160);
+                personaje->oro += 250;
+
+            }
+
+        }
+        else if(opcion == 3){ //camino a la derecha
+
+            mostrarHistoria(148,150);
+
+            Enemigo * centauro3 = searchHashTable(enemigos, "Centauro Mayor");
+
+            if(pelear(personaje, centauro3) == 0){
+
+                mostrarHistoria(162,164);
+                printf("\n\n");
+                system("pause");
+                return;
+
+            }
+
+            mostrarHistoria(152,160);
+            personaje->oro += 250;
+
+        }
+
+        mostrarHistoria(207, 211);
+        printf("\n\n");
+        system("pause");
+
+    } //OPCION 3 CAMINO DE LA DERECHA
+
+    if(ruta == 1){
+
+        mostrarHistoria(113, 116);
+        opcion = 1;
+
+        do{
+
+            clrscr();
+
+            mostrarHistoriaSinPausas(113,116);
+            printf("\n");
+
+            if(opcion == 1) printf("-> Mercado\n");
+            else printf("    Mercado\n");
+            if(opcion == 2) printf("-> Seguir por el pasillo\n\n");
+            else printf("    Seguir por el pasillo\n\n");
+
+            printf("Presione i para abrir el inventario\n");
+            printf("Presione e para abrir sus estadisticas");
+
+            do{
+                key  = getch();
+            }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+            if(key == 13) break;
+
+            switch(key){
+                case 72: if(opcion == 1) opcion = 2;
+                        else opcion--;
+                    break;
+                case 80: if(opcion == 2) opcion = 1;
+                        else opcion++;
+                    break;
+                case 105: abrirInventario(personaje);
+                    break;
+                case 73: abrirInventario(personaje);
+                    break;
+                case 101: abrirEstadisticas(personaje);
+                    break;
+                case 69:  abrirEstadisticas(personaje);
+                    break;
+            }
+
+        }while(1);
+
+    }
+    else{
+
+        opcion = 1;
+
+        do{
+
+            clrscr();
+
+            mostrarHistoriaSinPausas(207,211);
+            printf("\n");
+
+            if(opcion == 1) printf("-> Mercado\n");
+            else printf("    Mercado\n");
+            if(opcion == 2) printf("-> Seguir por el pasillo\n\n");
+            else printf("    Seguir por el pasillo\n\n");
+
+            printf("Presione i para abrir el inventario\n");
+            printf("Presione e para abrir sus estadisticas");
+
+            do{
+                key  = getch();
+            }while(key != 72 && key != 80 && key != 13 && key != 105 && key != 73 && key != 101 && key != 69);
+
+            if(key == 13) break;
+
+            switch(key){
+                case 72: if(opcion == 1) opcion = 2;
+                        else opcion--;
+                    break;
+                case 80: if(opcion == 2) opcion = 1;
+                        else opcion++;
+                    break;
+                case 105: abrirInventario(personaje);
+                    break;
+                case 73: abrirInventario(personaje);
+                    break;
+                case 101: abrirEstadisticas(personaje);
+                    break;
+                case 69:  abrirEstadisticas(personaje);
+                    break;
+            }
+
+        }while(1);
+
+    }
+
+    if(opcion == 1){
+
+        abrirTienda(personaje, "articulos_tienda.csv", armas, armaduras, pociones);
+
+    }
+
     system("pause");
+    free(personaje);
     return;
 
 }
@@ -2676,13 +3655,10 @@ void cargarPartida(HashTable * armas, HashTable * armaduras, HashTable * pocione
     char key;
     int opcion;
 
-    Personaje * personaje;
-    if(savePoint != 0) personaje = cargarPersonaje(personaje, armas, armaduras, pociones);
-
     if(savePoint == 0){
 
         clrscr();
-        char texto[50];
+        char texto[64];
         strcpy(texto, "No existen datos guardados, por favor, cree una nueva partida.");
         mostrarLetraPorLetra(texto);
         printf("\n\n");
@@ -2690,6 +3666,8 @@ void cargarPartida(HashTable * armas, HashTable * armaduras, HashTable * pocione
         return;
 
     }
+
+    Personaje * personaje = cargarPersonaje(personaje, armas, armaduras, pociones);
 
     if( (savePoint >= 1 && savePoint <= 4 ) || cargado == true){
 
@@ -2748,6 +3726,8 @@ void cargarPartida(HashTable * armas, HashTable * armaduras, HashTable * pocione
                     save = fopen("save.csv", "w");
                     fprintf(save,"%d", 0);
                     fclose(save);
+
+                    free(personaje);
 
                     mostrarHistoria(8,10);
                     return;
@@ -2960,8 +3940,18 @@ void cargarPartida(HashTable * armas, HashTable * armaduras, HashTable * pocione
 
     }
 
-    printf("\nlo que viene uwu");
+    if(savePoint >= 5 && savePoint <= 10){
+
+         int ruta;
+
+    }
+
+
+
     system("pause");
+
+    free(personaje);
+
     return;
 
 }

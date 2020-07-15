@@ -168,3 +168,16 @@ void * nextHashTable(HashTable * table) {
     return table->buckets[i]->value;
 
 }
+
+void deleteHashTable(HashTable * table){
+
+    int i;
+
+    for (i = 0 ; i < table->size ; i++){
+        if(table->buckets[i] != NULL) free(table->buckets[i]);
+    }
+
+    free(table->buckets);
+    free(table);
+
+}

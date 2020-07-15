@@ -101,4 +101,3 @@ typedef struct Enemigo{
     float resistenciaMagica;
 
 }Enemigo;
-

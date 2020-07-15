@@ -48,14 +48,10 @@ int main(){
 
         if(key == 13){
 
-            switch(opcion){
+            if(opcion == 1) nuevaPartida(armas, armaduras, pociones, enemigos);
+            else if(opcion == 2) cargarPartida(armas, armaduras, pociones, enemigos);
 
-                case 1: nuevaPartida(armas, armaduras, pociones, enemigos);
-                case 2: cargarPartida(armas, armaduras, pociones, enemigos);
-            }
-
-
-            if(opcion == 3){
+            else{
 
                 opcion = 1;
 
@@ -95,7 +91,6 @@ int main(){
         }
 
     }while(1);
-
 
     clrscr();
     mostrarLetraPorLetra("Nos veremos en la siguiente...");
