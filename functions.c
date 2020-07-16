@@ -1262,6 +1262,8 @@ void abrirInventario(Personaje * personaje){
 
     free(objetosEquipados);
 
+    //realmente un codigo muy largo
+
 }
 
 void abrirEstadisticas(Personaje * personaje){
@@ -2369,7 +2371,7 @@ void nuevaPartida(HashTable * armas, HashTable * armaduras, HashTable * pociones
         if(opcion == 2) printf("-> Daga de Bronce\n");
         else printf("    Daga de Bronce\n");
         if(opcion == 3) printf("-> Arco Corto\n");
-        else printf("    Arco de Attar\n");
+        else printf("    Arco Corto\n");
         if(opcion == 4) printf("-> Baculo\n");
         else printf("    Baculo\n");
 
